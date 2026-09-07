@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -16,7 +17,8 @@ static partial class RamBridge {
   public void Send(uint d,uint c,byte[] b) {w.Write(Encoding.ASCII.GetBytes("ORGB"));w.Write(d);w.Write(c);w.Write((uint)b.Length);w.Write(b);w.Flush();}
   byte[] Read(int n) {var b=r.ReadBytes(n);if(b.Length!=n) throw new EndOfStreamException();return b;}
   public byte[] Request(uint d,uint c) {Send(d,c,new byte[0]);for(int i=0;i<32;i++) {if(Encoding.ASCII.GetString(Read(4))!="ORGB") throw new IOException("Resposta RGB inválida.");uint rd=r.ReadUInt32(),rc=r.ReadUInt32(),n=r.ReadUInt32();if(n>1048576) throw new IOException("Resposta RGB excedeu limite.");byte[] b=Read((int)n);if(rd==d&&rc==c)return b;}throw new IOException("Resposta RGB não recebida.");}
-  public List<Device> List() {byte[] b=Request(0,0);if(b.Length!=4)throw new IOException("Contagem inválida.");uint n=BitConverter.ToUInt32(b,0);if(n>128)throw new IOException("Contagem excedeu limite.");var ds=new List<Device>();for(uint i=0;i<n;i++){Device d=Parse(Request(i,1));d.id=i;if(d.type==1&&d.name=="ENE DRAM")ds.Add(d);}return ds;}
+  public List<Device> ListAll() {byte[] b=Request(0,0);if(b.Length!=4)throw new IOException("Contagem inválida.");uint n=BitConverter.ToUInt32(b,0);if(n>128)throw new IOException("Contagem excedeu limite.");var ds=new List<Device>();for(uint i=0;i<n;i++){Device d=Parse(Request(i,1));d.id=i;ds.Add(d);}return ds;}
+  public List<Device> List() {return ListAll().Where(d=>d.type==1&&d.name=="ENE DRAM").ToList();}
   public Device Get(uint id){return Parse(Request(id,1));}
   public void Dispose(){tcp.Close();}
  }
@@ -29,6 +31,8 @@ static partial class RamBridge {
   d.leds=r.ReadUInt16();for(int i=0;i<d.leds;i++){Str(r);Skip(r,4);}int colors=r.ReadUInt16();if(colors!=d.leds||colors>512)throw new IOException("LEDs incompatíveis.");d.colors=new uint[colors];for(int i=0;i<colors;i++)d.colors[i]=r.ReadUInt32();if(r.BaseStream.Position!=r.BaseStream.Length)throw new IOException("Versão RGB incompatível.");return d;
  }}
  public static string Probe(){using(var c=new Connection()){var ds=c.List();if(ds.Count!=2)throw new IOException("Módulos ENE detectados: "+ds.Count+" (esperados: 2).");var text=new List<string>();foreach(var d in ds)text.Add(d.name+" | "+d.location+" | LEDs="+d.leds+" Direct="+d.direct);return string.Join(Environment.NewLine,text.ToArray());}}
+ public static List<Device> DiscoverAll(){using(var c=new Connection())return c.ListAll();}
+ public static string ProbeAll(){var ds=DiscoverAll();if(ds.Count==0)throw new IOException("Nenhum dispositivo foi exposto pelo servidor OpenRGB.");var text=new List<string>();foreach(var d in ds)text.Add(d.name+" | "+(string.IsNullOrEmpty(d.location)?"local não informado":d.location)+" | LEDs="+d.leds+(d.direct?" | Direct":""));return string.Join(Environment.NewLine,text.ToArray());}
  public static string Start(){try{return Probe();}catch{}string exe=Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"runtime","OpenRGB.exe");if(!File.Exists(exe))throw new IOException("Mantenha a pasta runtime junto do aplicativo.");Process.Start(new ProcessStartInfo(exe,"--server --noautoconnect"){UseShellExecute=true,Verb="runas",WindowStyle=ProcessWindowStyle.Hidden,WorkingDirectory=Path.GetDirectoryName(exe)});for(int i=0;i<15;i++){Thread.Sleep(500);try{return Probe();}catch{}}throw new IOException("RAM indisponível. Confira a autorização do Windows.");}
  public static byte[] Payload(int leds,Color c,int level){if(leds<1||leds>512||level<0||level>20)throw new ArgumentOutOfRangeException();using(var m=new MemoryStream()){var w=new BinaryWriter(m);w.Write((uint)(6+leds*4));w.Write((ushort)leds);for(int i=0;i<leds;i++){w.Write((byte)(c.R*level/20));w.Write((byte)(c.G*level/20));w.Write((byte)(c.B*level/20));w.Write((byte)0);}return m.ToArray();}}
  public static string Apply(Color color,int level){using(var c=new Connection()){var ds=c.List();if(ds.Count!=2)throw new IOException("Esperava dois módulos ENE; encontrados: "+ds.Count);foreach(var d in ds)if(d.staticMode==null||d.leds<1)throw new IOException("RAM sem modo Static compatível.");

@@ -2,7 +2,7 @@
 
 Abra `LumeRGB-Studio-v22.exe` diretamente. A distribuição compacta funciona com um único arquivo; a cor inicial e a restauração do setup continuam em branco, brilho 100%.
 
-## As 15 melhorias
+## As 16 melhorias
 
 1. **Prévia da barra:** a barra no teclado e na janela Barra LED representa o modo escolhido. A animação é ilustrativa; o firmware pode apresentar diferenças.
 2. **Barra nos perfis:** salvar, carregar, duplicar, exportar e importar preservam modo, cor, multicolorido, brilho e velocidade da barra. Carregar apenas prepara os ajustes.
@@ -19,6 +19,7 @@ Abra `LumeRGB-Studio-v22.exe` diretamente. A distribuição compacta funciona co
 13. **Zonas ARGB da MSI:** no card **MSI 650M PROJECT ZERO**, clique em **Zonas ARGB** para separar Fans, Water Cooler e o terceiro canal. Escolha o canal físico e a cor de cada um, salve e depois clique em **Aplicar** no card da placa-mãe. Se os equipamentos estiverem ligados no mesmo header, o hardware recebe um único sinal e não permite separação por software.
 14. **Acabamento da janela:** a moldura superior agora acompanha o tema escuro, com controles de minimizar, maximizar e fechar. Os botões Comparar e Desmarcar todos ganharam margem para não encostar ou cortar na borda.
 15. **Configuração completa:** Ferramentas → Exportar configuração completa guarda perfis, setup atual, favoritos, correções de cor e zonas ARGB. Importar configuração completa restaura tudo em um único arquivo JSON, sem alterar o executável portable.
+16. **Descoberta ARGB:** Ferramentas → Detectar dispositivos ARGB compatíveis consulta o servidor OpenRGB em modo somente leitura e lista os dispositivos, locais e quantidade de LEDs encontrados. A busca não envia cores.
 
 ## Instalação opcional
 
