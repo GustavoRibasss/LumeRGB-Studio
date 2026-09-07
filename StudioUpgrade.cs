@@ -1,0 +1,81 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Web.Script.Serialization;
+using System.Windows.Forms;
+
+public class ColorBalance {
+ public int R=100,G=100,B=100;
+ public bool Valid(){return R>=0&&R<=100&&G>=0&&G<=100&&B>=0&&B<=100;}
+ public Color Apply(Color c){return Color.FromArgb(c.R*R/100,c.G*G/100,c.B*B/100);}
+ public ColorBalance Copy(){return (ColorBalance)MemberwiseClone();}
+}
+static class Calibration {
+ public static ColorBalance[] Values=Enumerable.Range(0,4).Select(i=>new ColorBalance()).ToArray();
+ public static Color Adjust(int i,Color c){return Values[i].Apply(c);}
+}
+class AppliedDevice {
+ public ColorBalance Balance=new ColorBalance();public LightState State;public int Mode,Speed;public EffectOptions Options;public KeyboardBarSettings Bar;public MsiZoneSettings MsiZones;
+ public AppliedDevice Copy(){return new AppliedDevice{Balance=Balance.Copy(),State=State.Copy(),Mode=Mode,Speed=Speed,Options=Options.Copy(),Bar=Bar.Copy(),MsiZones=MsiZones==null?new MsiZoneSettings():MsiZones.Copy()};}
+ public string Key(){return new JavaScriptSerializer().Serialize(new{State.R,State.G,State.B,State.Brightness,Mode,Speed,Options,Balance,MsiZones});}
+}
+static class ProfileTransfer {
+ public static List<LightProfile> Merge(List<LightProfile> existing,List<LightProfile> imported){
+  if(imported==null||imported.Count>100||imported.Any(p=>!ProfileStore.Valid(p)))throw new IOException("O arquivo contém perfis inválidos.");
+  var next=new List<LightProfile>(existing);foreach(var p in imported){var copy=new JavaScriptSerializer().Deserialize<LightProfile>(new JavaScriptSerializer().Serialize(p));string basis=copy.Name;int number=2;while(next.Any(x=>string.Equals(x.Name,copy.Name,StringComparison.OrdinalIgnoreCase))){string suffix=" ("+number+++")";copy.Name=basis.Substring(0,Math.Min(basis.Length,40-suffix.Length))+suffix;}next.Add(copy);}if(next.Count>100)throw new IOException("O limite é de 100 perfis. Nenhum perfil foi importado.");return next;
+ }
+}
+partial class LumeStudio {
+ KeyboardBarSettings pendingBar=new KeyboardBarSettings();
+ AppliedDevice[] appliedDevices=new AppliedDevice[4],lightsOffRestore;
+ bool suppressAppliedRecord,blackoutActive;
+ Button toolsButton,compareButton,favoriteEffectButton,powerButton,msiZonesButton;
+ FlowLayoutPanel quickProfiles;System.Windows.Forms.Timer upgradeTimer;
+ HashSet<int> favoriteEffects=new HashSet<int>();
+ int[] activeEffectIndices=new int[0],lastEffectRgb=new int[4],effectSentCounts=new int[4];
+ static readonly string[] HardwareNames={"AULA HERO 68","MSI 650M PROJECT ZERO","RTX 3080 VISION","VIPER 7000MHZ"};
+ string UpgradeFile(string name){return Path.Combine(Path.GetDirectoryName(ProfileStore.FileName),name);}
+ void InitializeUpgrade(){
+  for(int i=0;i<4;i++){cards[i].State.Name=HardwareNames[i];cards[i].Included.Text=HardwareNames[i];help.SetToolTip(cards[i].Included,new[]{"Teclado AULA HERO 68","Placa-mãe MSI 650M PROJECT ZERO • iluminação ARGB","GIGABYTE GeForce RTX 3080 VISION • rev. 2 (adaptador configurado)","Memórias VIPER 7000MHZ • controlador ENE"}[i]);}
+  try{if(File.Exists(UpgradeFile("favorite-effects.json"))){var saved=new JavaScriptSerializer().Deserialize<int[]>(File.ReadAllText(UpgradeFile("favorite-effects.json")));if(saved!=null)favoriteEffects=new HashSet<int>(saved.Where(i=>i>=0&&i<EffectLibrary.Names.Length));}if(File.Exists(UpgradeFile("color-balance.json"))){var values=new JavaScriptSerializer().Deserialize<ColorBalance[]>(File.ReadAllText(UpgradeFile("color-balance.json")));if(values!=null&&values.Length==4&&values.All(v=>v!=null&&v.Valid()))Calibration.Values=values;}}catch(Exception ex){status.Text="Não foi possível ler as preferências: "+ex.Message;}
+  toolsButton=Button("Ferramentas   ▾",surface);toolsButton.SetBounds(U(16),U(161),U(148),U(30));side.Controls.Add(toolsButton);toolsButton.Click+=delegate{if(!busy)ShowUpgradeMenu();};
+  msiZonesButton=Button("Zonas ARGB",surface);cards[1].Controls.Add(msiZonesButton);msiZonesButton.Click+=delegate{if(busy)return;using(var dialog=new MsiZonesForm(msiZones,cards[1].State.Color)){if(dialog.ShowDialog(this)==DialogResult.OK){msiZones=dialog.Result.Copy();TrackSetup();status.Text=msiZones.Split?"Zonas MSI preparadas. Clique em Aplicar no card da placa-mãe.":"Controle unificado da placa-mãe restaurado.";}}};help.SetToolTip(msiZonesButton,"Separe Fans, Water Cooler e o terceiro canal ARGB da MSI.");
+  compareButton=Button("Comparar",surface);main.Controls.Add(compareButton);compareButton.Click+=delegate{ShowComparison();};
+  quickProfiles=new FlowLayoutPanel{WrapContents=false,BackColor=stage.BackColor};stage.Controls.Add(quickProfiles);
+  favoriteEffectButton=Button("☆",surface);hero.Controls.Add(favoriteEffectButton);favoriteEffectButton.Click+=delegate{ToggleEffectFavorite();};effectMode.SelectedIndexChanged+=delegate{UpdateFavoriteButton();};
+  powerButton=Button("Apagar tudo",surface);footer.Controls.Add(powerButton);powerButton.Click+=async delegate{await ToggleLighting();};
+  upgradeTimer=new System.Windows.Forms.Timer{Interval=100};upgradeTimer.Tick+=delegate{cards[0].Art.BarPreview=pendingBar.Copy();cards[0].Art.Invalidate();RefreshPending();};upgradeTimer.Start();FormClosed+=delegate{upgradeTimer.Stop();upgradeTimer.Dispose();};
+  Resize+=delegate{LayoutUpgrade();};Shown+=delegate{LayoutUpgrade();};RebuildEffectMenu();RefreshQuickProfiles();LayoutUpgrade();
+ }
+ void LayoutUpgrade(){if(toolsButton==null)return;compareButton.SetBounds(stage.Left+stage.Width-U(276),stage.Top+stage.Height+U(4),U(104),U(27));quickProfiles.SetBounds(U(16),stage.Height-U(31),stage.Width-U(32),U(28));quickProfiles.BringToFront();modePicker.Width=U(202);favoriteEffectButton.SetBounds(U(228),U(86),U(34),U(30));powerButton.SetBounds(footer.Width-U(158),U(10),U(142),U(34));status.Width=Math.Max(U(100),footer.Width-status.Left-U(174));for(int i=0;i<4;i++){cards[i].Included.Font=new Font("Segoe UI",9,FontStyle.Bold);connectionLabels[i].SetBounds(U(14),U(43),cards[i].Width-U(28),U(16));connectionLabels[i].TextAlign=ContentAlignment.MiddleLeft;cards[i].Slider.SetBounds(U(9),U(58),cards[i].Width-U(125),U(23));cards[i].Percent.SetBounds(cards[i].Width-U(64),U(62),U(54),U(20));cards[i].Pick.Top=cards[i].Apply.Top=cards[i].Test.Top=U(87);cards[i].Status.Top=U(92);}keyboardBarButton.SetBounds(cards[0].Width-U(90),U(5),U(78),U(26));if(msiZonesButton!=null)msiZonesButton.SetBounds(cards[1].Width-U(100),U(5),U(90),U(26));}
+ void UpdateFavoriteButton(){if(favoriteEffectButton!=null){favoriteEffectButton.Text=favoriteEffects.Contains(effectMode.SelectedIndex)?"★":"☆";help.SetToolTip(favoriteEffectButton,"Favoritar este efeito");}}
+ void RebuildEffectMenu(){modes.Items.Clear();foreach(int index in Enumerable.Range(0,EffectLibrary.Names.Length).OrderByDescending(i=>favoriteEffects.Contains(i)).ThenBy(i=>i)){int mode=index;modes.Items.Add((favoriteEffects.Contains(mode)?"★  ":"")+EffectLibrary.Names[mode],null,delegate{effectMode.SelectedIndex=mode;});}UpdateFavoriteButton();}
+ void ToggleEffectFavorite(){if(busy)return;int mode=effectMode.SelectedIndex;if(!favoriteEffects.Add(mode))favoriteEffects.Remove(mode);try{Directory.CreateDirectory(Path.GetDirectoryName(UpgradeFile("favorite-effects.json")));File.WriteAllText(UpgradeFile("favorite-effects.json"),new JavaScriptSerializer().Serialize(favoriteEffects.ToArray()));RebuildEffectMenu();}catch(Exception ex){status.Text="Não foi possível salvar favoritos: "+ex.Message;}}
+ void RefreshQuickProfiles(){if(quickProfiles==null)return;foreach(Control old in quickProfiles.Controls.Cast<Control>().ToArray())old.Dispose();foreach(var profile in profiles.Where(p=>p.Favorite).Take(3)){var chosen=profile;var b=Button("★ "+profile.Name,surface);b.Width=U(140);b.Height=U(25);b.Margin=new Padding(0,0,U(6),0);b.AutoEllipsis=true;b.Click+=async delegate{if(busy)return;profileList.SelectedIndex=profiles.IndexOf(chosen);await LoadProfileAsync();await ApplyCards(cards.Where(c=>c.State.Included).ToList());};quickProfiles.Controls.Add(b);}help.SetToolTip(quickProfiles,"Clique com o botão direito em um perfil para marcar como favorito. Os três primeiros aparecem aqui.");}
+ void ShowUpgradeMenu(){var menu=new ContextMenuStrip{ShowImageMargin=false,Renderer=new StudioMenuRenderer(),BackColor=surface,ForeColor=Color.White};var copy=new ToolStripMenuItem("Copiar paleta para "+effectMode.Text);for(int i=1;i<EffectLibrary.Names.Length;i++){int source=i;copy.DropDownItems.Add(EffectLibrary.Names[i],null,delegate{CopyPalette(source);});}copy.Enabled=effectMode.SelectedIndex>0;menu.Items.Add(copy);menu.Items.Add("Comparar aplicado e ajustes",null,delegate{ShowComparison();});menu.Items.Add("Ajustar cores entre dispositivos",null,delegate{OpenCalibration();});menu.Items.Add(new ToolStripSeparator());menu.Items.Add("Exportar perfis…",null,delegate{ExportProfiles();});menu.Items.Add("Importar perfis…",null,delegate{ImportProfiles();});menu.Items.Add("Atalhos de teclado…",null,delegate{ConfigureShortcuts();});menu.Closed+=delegate{BeginInvoke(new Action(()=>menu.Dispose()));};menu.Show(toolsButton,new Point(0,toolsButton.Height));}
+ void CopyPalette(int source){if(busy||effectMode.SelectedIndex==0)return;var a=effectOptions[source];var b=effectOptions[effectMode.SelectedIndex];if(a.CustomPalette||source==16){b.Foreground=a.Foreground;b.Grid=a.Grid;b.Background=a.Background;}else{Color basis=cards.First(c=>c.State.Included||c==cards.Last()).State.Color;double period=40-6*effectSpeed.Value;b.Foreground=RgbApp.FullIntensity(EffectLibrary.Sample(source,basis,period*.15,effectSpeed.Value,0)).ToArgb()&0xffffff;b.Grid=RgbApp.FullIntensity(EffectLibrary.Sample(source,basis,period*.55,effectSpeed.Value,0)).ToArgb()&0xffffff;b.Background=0;}b.CustomPalette=true;b.Saturation=a.Saturation;b.Intensity=a.Intensity;TrackSetup();status.Text="Paleta copiada de "+EffectLibrary.Names[source]+". Os movimentos foram preservados.";}
+ void ExportProfiles(){using(var d=new SaveFileDialog{Filter="Perfis Lume (*.json)|*.json",FileName="perfis-lume.json"})if(d.ShowDialog(this)==DialogResult.OK)try{File.WriteAllText(d.FileName,new JavaScriptSerializer().Serialize(profiles));status.Text="Perfis exportados: "+profiles.Count+".";}catch(Exception ex){status.Text="Falha ao exportar: "+ex.Message;}}
+ void ImportProfiles(){if(!profilesWritable){status.Text="Corrija o arquivo de perfis antes de importar.";return;}using(var d=new OpenFileDialog{Filter="Perfis Lume (*.json)|*.json"})if(d.ShowDialog(this)==DialogResult.OK)try{if(new FileInfo(d.FileName).Length>2000000)throw new IOException("Arquivo muito grande.");var incoming=new JavaScriptSerializer().Deserialize<List<LightProfile>>(File.ReadAllText(d.FileName));ProfileStore.Upgrade(incoming);var next=ProfileTransfer.Merge(profiles,incoming);ProfileStore.Write(next);profiles=next;RefreshProfiles();status.Text="Perfis importados. Nomes repetidos receberam um número; os existentes foram preservados.";}catch(Exception ex){status.Text="Não foi possível importar: "+ex.Message;}}
+ AppliedDevice CurrentDevice(int i){return new AppliedDevice{Balance=Calibration.Values[i].Copy(),State=cards[i].State.Copy(),Mode=effectMode.SelectedIndex,Speed=effectSpeed.Value,Options=effectOptions[effectMode.SelectedIndex].Copy(),Bar=pendingBar.Copy(),MsiZones=i==1?(msiZones==null?new MsiZoneSettings():msiZones.Copy()):new MsiZoneSettings()};}
+ void RecordApplied(int i,LightState state,int mode,int speed,EffectOptions options,KeyboardBarSettings bar){if(suppressAppliedRecord)return;appliedDevices[i]=new AppliedDevice{Balance=Calibration.Values[i].Copy(),State=state.Copy(),Mode=mode,Speed=speed,Options=options.Copy(),Bar=bar.Copy(),MsiZones=i==1?(msiZones==null?new MsiZoneSettings():msiZones.Copy()):new MsiZoneSettings()};}
+ void FreezeAppliedEffects(){foreach(int i in activeEffectIndices){var old=appliedDevices[i];if(old==null||old.Mode==0||effectSentCounts[i]==0)continue;var c=Color.FromArgb(lastEffectRgb[i]);old.State.R=c.R;old.State.G=c.G;old.State.B=c.B;old.Mode=0;old.Options=new EffectOptions();}activeEffectIndices=new int[0];}
+ void RefreshPending(){if(upgradeTimer==null)return;for(int i=0;i<4;i++){var old=appliedDevices[i];bool dirty=old==null||old.Key()!=CurrentDevice(i).Key()||(i==0&&new JavaScriptSerializer().Serialize(old.Bar)!=new JavaScriptSerializer().Serialize(pendingBar));cards[i].Pending=dirty;help.SetToolTip(cards[i],dirty?"Ponto amarelo: ajustes ainda não aplicados.":"Configuração enviada aos LEDs.");cards[i].Invalidate();}compareButton.Enabled=appliedDevices.Any(x=>x!=null);toolsButton.Enabled=powerButton.Enabled=!busy;powerButton.Text=blackoutActive?"Restaurar luzes":"Apagar tudo";quickProfiles.Enabled=!busy;}
+ void ShowComparison(){if(!appliedDevices.Any(x=>x!=null)){status.Text="Aplique uma configuração para poder comparar.";return;}var before=appliedDevices.Select(x=>x==null?null:x.Copy()).ToArray();var after=Enumerable.Range(0,4).Select(CurrentDevice).ToArray();using(var f=new CompareSetupForm(before,after,HardwareNames))f.ShowDialog(this);}
+ async Task ToggleLighting(){if(busy)return;if(blackoutActive){await RestoreLighting();return;}lightsOffRestore=appliedDevices.Select((x,i)=>x==null?CurrentDevice(i):x.Copy()).ToArray();SetBusy(true);suppressAppliedRecord=true;try{await StopEffect();var errors=new List<string>();var off=new KeyboardBarSettings{Mode=0};Hid.BarSettings=off;for(int i=0;i<4;i++){int index=i;try{await Task.Run(()=>{if(effectWriter!=null)effectWriter(index,Color.Black,0);else SendStaticFrame(index,Color.Black,0);});cards[i].Status.Text="Apagado";}catch(Exception ex){errors.Add(HardwareNames[i]+": "+ex.Message);}}blackoutActive=true;status.Text=errors.Count==0?"Iluminação apagada. Use Restaurar luzes para voltar.":"Alguns dispositivos não apagaram: "+string.Join(" | ",errors);}finally{suppressAppliedRecord=false;SetBusy(false);}}
+ async Task RestoreLighting(){if(lightsOffRestore==null)return;SetBusy(true);suppressAppliedRecord=true;try{await StopEffect();Hid.BarSettings=lightsOffRestore[0].Bar.Copy();Hid.ActiveBarBalance=lightsOffRestore[0].Balance.Copy();var errors=new List<string>();for(int i=0;i<4;i++){int index=i;var old=lightsOffRestore[i];if(old.Mode!=0)continue;try{await Task.Run(()=>{if(effectWriter!=null)effectWriter(index,old.Balance.Apply(old.State.Color),old.State.Brightness);else SendBalancedStaticFrame(index,old.State.Color,old.State.Brightness,old.Balance);});cards[i].Status.Text="Aplicado";}catch(Exception ex){errors.Add(HardwareNames[i]+": "+ex.Message);}}
+   var animated=Enumerable.Range(0,4).Where(i=>lightsOffRestore[i].Mode>0).ToArray();if(animated.Length>0){var first=lightsOffRestore[animated[0]];effectStarted=new TaskCompletionSource<bool>();effectCancel=new System.Threading.CancellationTokenSource();effectStop.Enabled=true;effectTask=RunEffect(animated.Select(i=>cards[i]).ToList(),animated.Select(i=>lightsOffRestore[i].State.Copy()).ToArray(),animated,first.Mode,first.Speed,effectCancel.Token,first.Options.Copy(),lightsOffRestore.Select(x=>x.Balance.Copy()).ToArray());await effectStarted.Task;if(!applySucceeded)errors.Add(applyError);}
+   if(errors.Count==0)appliedDevices=lightsOffRestore.Select(x=>x.Copy()).ToArray();blackoutActive=errors.Count!=0;status.Text=errors.Count==0?"Iluminação anterior restaurada.":"Falha ao restaurar: "+string.Join(" | ",errors);
+  }finally{suppressAppliedRecord=false;SetBusy(false);}}
+ void OpenCalibration(){using(var f=new CalibrationForm(HardwareNames,Calibration.Values)){if(f.ShowDialog(this)!=DialogResult.OK)return;try{Directory.CreateDirectory(Path.GetDirectoryName(UpgradeFile("color-balance.json")));File.WriteAllText(UpgradeFile("color-balance.json"),new JavaScriptSerializer().Serialize(f.Values));Calibration.Values=f.Values;status.Text="Correção de cores salva. Aplique a iluminação para usar.";}catch(Exception ex){status.Text="Não foi possível salvar a correção: "+ex.Message;}}}
+}
+
+
+
+
+
+
+
