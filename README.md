@@ -1,6 +1,6 @@
 # Lume Studio 22
 
-Abra `LumeRGB-Studio-v22.exe` mantendo a pasta `runtime` ao lado. A cor inicial e a restauração do setup continuam em branco, brilho 100%.
+Baixe a release mais recente e execute `LumeRGB-Studio-v22.exe`. A distribuição compacta funciona com um único arquivo; a cor inicial e a restauração do setup continuam em branco, brilho 100%.
 
 ## As 14 melhorias
 
@@ -21,7 +21,7 @@ Abra `LumeRGB-Studio-v22.exe` mantendo a pasta `runtime` ao lado. A cor inicial 
 
 ## Instalação opcional
 
-`instalar.ps1` copia o aplicativo, o ícone e o runtime para `%LOCALAPPDATA%\Programs\Lume Studio` e atualiza o atalho na Área de Trabalho. Os perfis ficam em `%LOCALAPPDATA%\LumeRGB`.
+O executável pode ser usado diretamente. Os perfis ficam em `%LOCALAPPDATA%\LumeRGB`.
 
 ## Validação
 
