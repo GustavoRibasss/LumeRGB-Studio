@@ -1,6 +1,6 @@
 # Lume Studio 22
 
-Baixe a release mais recente e execute `LumeRGB-Studio-v22.exe`. A distribuição compacta funciona com um único arquivo; a cor inicial e a restauração do setup continuam em branco, brilho 100%.
+Abra `LumeRGB-Studio-v22.exe` diretamente. A distribuição compacta funciona com um único arquivo; a cor inicial e a restauração do setup continuam em branco, brilho 100%.
 
 ## As 15 melhorias
 
