@@ -7,7 +7,7 @@ using System.Windows.Forms;
 class OpenRgbDevicesForm:Form {
  ListBox devices;Label status;Button refresh,close;
  public OpenRgbDevicesForm(){
-  Text="Lume / Dispositivos ARGB compatíveis";ClientSize=new Size(660,410);MinimumSize=ClientSize;StartPosition=FormStartPosition.CenterParent;BackColor=Color.FromArgb(11,12,17);ForeColor=Color.White;Font=new Font("Segoe UI",9);FormBorderStyle=FormBorderStyle.FixedDialog;MaximizeBox=false;MinimizeBox=false;ShowInTaskbar=false;
+  Text="ThebestRGB / Dispositivos ARGB compatíveis";ClientSize=new Size(660,410);MinimumSize=ClientSize;StartPosition=FormStartPosition.CenterParent;BackColor=Color.FromArgb(11,12,17);ForeColor=Color.White;Font=new Font("Segoe UI",9);FormBorderStyle=FormBorderStyle.FixedDialog;MaximizeBox=false;MinimizeBox=false;ShowInTaskbar=false;
   Controls.Add(new Label{Text="Dispositivos encontrados pelo OpenRGB",Font=new Font("Segoe UI",14,FontStyle.Bold),Location=new Point(24,28),AutoSize=true});
   Controls.Add(new Label{Text="A busca consulta apenas nomes, canais e LEDs. Nenhuma cor é enviada durante a detecção.",ForeColor=LumeStudio.Muted,Location=new Point(24,60),AutoSize=true});
   devices=new ListBox{Location=new Point(24,112),Size=new Size(612,200),BackColor=Color.FromArgb(25,27,35),ForeColor=Color.White,BorderStyle=BorderStyle.FixedSingle,IntegralHeight=false};Controls.Add(devices);

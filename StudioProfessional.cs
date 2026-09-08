@@ -17,7 +17,7 @@ partial class LumeStudio {
  static extern int SetWindowTheme(IntPtr hwnd,string subAppName,string subIdList);
  internal static void ApplyDarkTitleBar(Form form){try{SetPreferredAppMode(2);AllowDarkModeForWindow(form.Handle,true);SetWindowTheme(form.Handle,"DarkMode_Explorer",null);int enabled=1;DwmSetWindowAttribute(form.Handle,20,ref enabled,4);DwmSetWindowAttribute(form.Handle,19,ref enabled,4);}catch{} }
  void InitializeProfessional(){
-  Text="Lume / Studio 22";BackColor=Color.FromArgb(10,11,15);Muted=Color.FromArgb(143,145,159);MinimumSize=new Size(1180,720);ClientSize=new Size(1280,Math.Min(800,Screen.PrimaryScreen.WorkingArea.Height-70));DoubleBuffered=true;
+  Text="ThebestRGB / Studio 22";BackColor=Color.FromArgb(10,11,15);Muted=Color.FromArgb(143,145,159);MinimumSize=new Size(1180,720);ClientSize=new Size(1280,Math.Min(800,Screen.PrimaryScreen.WorkingArea.Height-70));DoubleBuffered=true;
   side.Width=180;side.BackColor=Color.FromArgb(14,15,19);side.AutoScroll=false;main.BackColor=BackColor;InitializeWindowChrome();
   help=new ToolTip{AutoPopDelay=10000};
   foreach(Control item in side.Controls)if(!(item==profileList||item==profileName||item==save||item==load||item==remove))item.Visible=false;

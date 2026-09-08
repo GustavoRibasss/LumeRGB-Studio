@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: GPL-2.0-or-later
+// SPDX-License-Identifier: GPL-2.0-or-later
 // AULA packet protocol adapted from dunn1o's OpenRGB contribution (2026).
 // https://gitlab.com/CalcProgrammer1/OpenRGB/-/merge_requests/3422
 using System;
@@ -176,9 +176,9 @@ class RgbApp:Form {
  public static Color FullIntensity(Color c) {int max=Math.Max(c.R,Math.Max(c.G,c.B));if(max==0)return Color.Black;return Color.FromArgb((c.R*255+max/2)/max,(c.G*255+max/2)/max,(c.B*255+max/2)/max);}
  Color chosen=Color.FromArgb(117,88,255); Label status; Button colorButton; StudioSlider brightness; Button apply;
  public RgbApp() {
-  Text="Lume RGB v9 • Teclado, gabinete, RTX e RAM"; ClientSize=new Size(700,875);MinimumSize=new Size(716,550);StartPosition=FormStartPosition.CenterScreen;AutoScroll=true;AutoScrollMinSize=new Size(680,875);
+  Text="ThebestRGB v9 • Teclado, gabinete, RTX e RAM"; ClientSize=new Size(700,875);MinimumSize=new Size(716,550);StartPosition=FormStartPosition.CenterScreen;AutoScroll=true;AutoScrollMinSize=new Size(680,875);
   BackColor=Color.FromArgb(19,21,30);ForeColor=Color.White;Font=new Font("Segoe UI",10);AutoScaleMode=AutoScaleMode.Dpi;
-  var title=new Label {Text="Lume RGB",Font=new Font("Segoe UI",25,FontStyle.Bold),AutoSize=true,Location=new Point(28,23)};Controls.Add(title);
+  var title=new Label {Text="ThebestRGB",Font=new Font("Segoe UI",25,FontStyle.Bold),AutoSize=true,Location=new Point(28,23)};Controls.Add(title);
   Controls.Add(new Label {Text="Controle local de iluminação",AutoSize=true,ForeColor=Color.Silver,Location=new Point(31,78)});
   var keyboard=new GroupBox {Text="AULA HERO 68 • TECLAS E BARRA LED",ForeColor=Color.White,Location=new Point(28,118),Size=new Size(644,200),Anchor=AnchorStyles.Top|AnchorStyles.Left|AnchorStyles.Right};Controls.Add(keyboard);
   colorButton=new Button {Text="Escolher cor",Location=new Point(20,37),Size=new Size(175,42),BackColor=chosen,ForeColor=Color.White,FlatStyle=FlatStyle.Flat};colorButton.Click+=delegate {using(var dialog=new ColorDialog {Color=chosen,FullOpen=true}) if(dialog.ShowDialog()==DialogResult.OK) {chosen=FullIntensity(dialog.Color);colorButton.BackColor=chosen;colorButton.ForeColor=chosen.GetBrightness()>0.6f?Color.Black:Color.White;status.Text="Cor RGB: "+chosen.R+", "+chosen.G+", "+chosen.B+". Ajuste a intensidade na barra de brilho.";} };keyboard.Controls.Add(colorButton);

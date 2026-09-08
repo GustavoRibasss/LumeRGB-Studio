@@ -31,7 +31,7 @@ partial class EffectEditor:Form {
  FlowLayoutPanel[] pages=new FlowLayoutPanel[3];Button[] tabs=new Button[3];Panel right,left,bottom;Label note,description;CheckBox customPaletteToggle;int currentTab;
  public EffectEditor(int mode,EffectOptions initial,int speed,LightState[] states){
   this.mode=mode;this.states=states;Result=initial.Copy();Speed=speed;
-  Text="Lume / Configurar "+EffectLibrary.Names[mode];ClientSize=new Size(1080,Math.Min(720,Screen.PrimaryScreen.WorkingArea.Height-55));MinimumSize=new Size(1040,690);StartPosition=FormStartPosition.CenterParent;BackColor=Color.FromArgb(10,11,15);ForeColor=Color.White;Font=new Font("Segoe UI",9);AutoScaleDimensions=new SizeF(96,96);AutoScaleMode=AutoScaleMode.Dpi;
+  Text="ThebestRGB / Configurar "+EffectLibrary.Names[mode];ClientSize=new Size(1080,Math.Min(720,Screen.PrimaryScreen.WorkingArea.Height-55));MinimumSize=new Size(1040,690);StartPosition=FormStartPosition.CenterParent;BackColor=Color.FromArgb(10,11,15);ForeColor=Color.White;Font=new Font("Segoe UI",9);AutoScaleDimensions=new SizeF(96,96);AutoScaleMode=AutoScaleMode.Dpi;
   bottom=new Panel{Dock=DockStyle.Bottom,Height=78,BackColor=Color.FromArgb(17,18,23)};Controls.Add(bottom);
   var cancel=LumeStudio.Button("Cancelar",Color.FromArgb(35,36,45));cancel.SetBounds(20,23,100,34);cancel.DialogResult=DialogResult.Cancel;bottom.Controls.Add(cancel);CancelButton=cancel;
   var reset=LumeStudio.Button("Restaurar este efeito",Color.FromArgb(35,36,45));reset.SetBounds(132,23,167,34);bottom.Controls.Add(reset);reset.Click+=delegate{Result=new EffectOptions();Speed=3;TrackEditor();BuildOptions();note.Text="Padrão restaurado na prévia. Confirme para manter.";};

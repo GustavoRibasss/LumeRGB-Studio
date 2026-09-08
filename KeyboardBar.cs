@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: GPL-2.0-or-later
+// SPDX-License-Identifier: GPL-2.0-or-later
 using System;
 using System.Drawing;
 using System.IO;
@@ -48,7 +48,7 @@ class KeyboardBarForm:Form {
  public static readonly int[] ModeIds={-1,0,3,1,4,2,5};
  public static readonly string[] ModeNames={"Acompanhar as teclas","Desligada","Luz constante","Fluxo","Respiração","Neon","Luz correndo"};
  public KeyboardBarForm(KeyboardBarSettings original,Func<KeyboardBarSettings,Task<string>> apply,Action<KeyboardBarSettings> prepare=null){
-  var settings=original.Copy();Text="Lume / Barra LED do teclado";ClientSize=new Size(480,514);MinimumSize=Size;MaximumSize=Size;StartPosition=FormStartPosition.CenterParent;Font=new Font("Segoe UI",10);BackColor=Color.FromArgb(20,21,27);ForeColor=Color.White;AutoScaleMode=AutoScaleMode.Dpi;MaximizeBox=false;MinimizeBox=false;
+  var settings=original.Copy();Text="ThebestRGB / Barra LED do teclado";ClientSize=new Size(480,514);MinimumSize=Size;MaximumSize=Size;StartPosition=FormStartPosition.CenterParent;Font=new Font("Segoe UI",10);BackColor=Color.FromArgb(20,21,27);ForeColor=Color.White;AutoScaleMode=AutoScaleMode.Dpi;MaximizeBox=false;MinimizeBox=false;
   Controls.Add(new Label{Text="Barra LED do teclado",Font=new Font("Segoe UI",20,FontStyle.Bold),AutoSize=true,Location=new Point(22,18)});
   Controls.Add(new Label{Text="Modo da barra",AutoSize=true,Location=new Point(24,78)});
   var mode=new ComboBox{DropDownStyle=ComboBoxStyle.DropDownList,BackColor=Color.FromArgb(35,36,45),ForeColor=Color.White,FlatStyle=FlatStyle.Flat};mode.Items.AddRange(ModeNames);mode.SetBounds(24,104,432,32);mode.SelectedIndex=Array.IndexOf(ModeIds,settings.Mode);Controls.Add(mode);

@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: GPL-2.0-or-later
+// SPDX-License-Identifier: GPL-2.0-or-later
 // Persistent color streams, using the same validated device addresses and packets.
 using System;
 using System.Collections.Generic;

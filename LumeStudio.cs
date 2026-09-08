@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-2.0-or-later
-// Lume RGB Studio. Hardware adapters: LumeRGB.cs, VisionGpu.cs, RamBridge.cs.
+// ThebestRGB Studio. Hardware adapters: LumeRGB.cs, VisionGpu.cs, RamBridge.cs.
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -72,7 +72,7 @@ partial class LumeStudio:Form {
  static Icon LoadAppIcon(){try{string path=Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"LumeStudio.ico");if(File.Exists(path))return new Icon(path);}catch{}return SystemIcons.Application;}
  Label Label(string text,int size,Color color,int x,int y){var l=new Label{Text=text,Font=new Font("Segoe UI",size,size>=18?FontStyle.Bold:FontStyle.Regular),ForeColor=color,AutoSize=true,Location=new Point(x,y)};return l;}
  public LumeStudio(){
-  Text="Lume RGB Studio · 21";Icon=LoadAppIcon();BackColor=Color.FromArgb(12,16,24);ForeColor=Color.White;Font=new Font("Segoe UI",9);ClientSize=new Size(1140,Math.Min(918,Screen.PrimaryScreen.WorkingArea.Height-65));MinimumSize=new Size(1050,720);StartPosition=FormStartPosition.CenterScreen;AutoScaleDimensions=new SizeF(96,96);AutoScaleMode=AutoScaleMode.Dpi;
+  Text="ThebestRGB Studio · 21";Icon=LoadAppIcon();BackColor=Color.FromArgb(12,16,24);ForeColor=Color.White;Font=new Font("Segoe UI",9);ClientSize=new Size(1140,Math.Min(918,Screen.PrimaryScreen.WorkingArea.Height-65));MinimumSize=new Size(1050,720);StartPosition=FormStartPosition.CenterScreen;AutoScaleDimensions=new SizeF(96,96);AutoScaleMode=AutoScaleMode.Dpi;
   side=new Panel{Dock=DockStyle.Left,Width=208,BackColor=Color.FromArgb(17,21,31)};Controls.Add(side);
   main=new Panel{Dock=DockStyle.Fill,AutoScroll=false,Padding=new Padding(26)};Controls.Add(main);main.BringToFront();
   side.Controls.Add(Label("LUME",25,Color.White,23,28));side.Controls.Add(Label("RGB STUDIO",9,Muted,27,72));
