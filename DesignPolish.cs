@@ -4,7 +4,7 @@ using System.Linq;
 using System.Windows.Forms;
 
 partial class LumeStudio {
- internal const string ReleaseVersion="22.4.0";
+ internal const string ReleaseVersion="22.4.1";
  bool designReady,designLayout;
  Button newProfile,editProfile,aboutStudio;
  void InitializeDesign(){
@@ -43,6 +43,6 @@ partial class LumeStudio {
   connectionLabels[i].SetBounds(U(16),U(43),w-U(32),U(22));connectionLabels[i].BackColor=c.BackColor;
   c.Slider.SetBounds(U(12),U(72),w-U(84),U(26));c.Percent.SetBounds(w-U(64),U(76),U(54),U(22));
   c.Pick.SetBounds(U(16),U(101),U(64),U(30));c.Apply.SetBounds(U(88),U(101),U(76),U(30));c.Test.SetBounds(U(172),U(101),U(66),U(30));c.Status.SetBounds(w-U(108),U(103),U(94),U(26));
-  if(i==0)keyboardBarButton.SetBounds(w-U(94),U(12),U(80),U(28));if(i==1)msiZonesButton.SetBounds(w-U(108),U(12),U(94),U(28));
+  if(i==0)keyboardBarButton.SetBounds(w-U(94),U(12),U(80),U(28));
  }
 }
