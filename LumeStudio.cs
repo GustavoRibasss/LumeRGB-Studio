@@ -45,7 +45,7 @@ class DeviceArt:Control {
 class LightCard:Panel {
  public bool Pending;protected override void OnPaint(PaintEventArgs e){base.OnPaint(e);if(Pending)using(var b=new SolidBrush(Color.FromArgb(255,190,90)))e.Graphics.FillEllipse(b,Width-9,Height-9,5,5);} public LightState State;public CheckBox Included;public StudioSlider Slider;public Label Percent,Status;public Button Pick,Apply,Test;public DeviceArt Art;
  public event Action<LightCard> ApplyRequested;
- public LightCard(int kind,LightState state){State=state;BackColor=Color.FromArgb(23,28,40);Padding=new Padding(16);Size=new Size(395,244);
+ public LightCard(int kind,LightState state){DoubleBuffered=true;State=state;BackColor=Color.FromArgb(23,28,40);Padding=new Padding(16);Size=new Size(395,244);
   Included=new StudioCheckBox{Text=state.Name,Checked=state.Included,AutoSize=true,ForeColor=Color.White,Location=new Point(16,13),Font=new Font("Segoe UI",11,FontStyle.Bold)};Controls.Add(Included);
   var subtitle=new Label{Text=new[]{"AULA HERO 68 · teclas + barra LED","MSI PROJECT ZERO · 3 conectores ARGB","GIGABYTE VISION · logo RGB","VIPER ELITE 5 · 2 módulos ENE"}[kind],ForeColor=LumeStudio.Muted,AutoSize=true,Location=new Point(17,42),Font=new Font("Segoe UI",8)};Controls.Add(subtitle);
   Art=new DeviceArt(kind){Location=new Point(16,65)};Controls.Add(Art);

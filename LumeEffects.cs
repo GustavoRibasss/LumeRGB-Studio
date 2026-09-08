@@ -89,7 +89,7 @@ partial class LumeStudio {
   using(var linked=CancellationTokenSource.CreateLinkedTokenSource(token))
   using(var preview=new System.Windows.Forms.Timer{Interval=33}){
    preview.Tick+=delegate{
-    if(linked.IsCancellationRequested)return;
+    if(linked.IsCancellationRequested||!Visible||WindowState==FormWindowState.Minimized)return;
     for(int i=0;i<targets.Count;i++){
      if(Volatile.Read(ref counts[i])==0){targets[i].Status.Text="Preparando";continue;}
      targets[i].Art.Light=EffectOptions.Sample(mode,states[i].Color,clock.Elapsed.TotalSeconds,speed,indices[i],options);
