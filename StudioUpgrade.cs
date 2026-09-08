@@ -44,10 +44,10 @@ partial class LumeStudio {
  FlowLayoutPanel quickProfiles;System.Windows.Forms.Timer upgradeTimer;
  HashSet<int> favoriteEffects=new HashSet<int>();
  int[] activeEffectIndices=new int[0],lastEffectRgb=new int[4],effectSentCounts=new int[4];
- static readonly string[] HardwareNames={"AULA HERO 68","MSI 650M PROJECT ZERO","RTX 3080 VISION","VIPER 7000MHZ"};
+ static readonly string[] HardwareNames={"AULA HERO 68","MSI B650M PROJECT ZERO","GIGABYTE RTX 3080","VIPER 7000MHZ BRANCA RGB"};
  string UpgradeFile(string name){return Path.Combine(Path.GetDirectoryName(ProfileStore.FileName),name);}
  void InitializeUpgrade(){
-  for(int i=0;i<4;i++){cards[i].State.Name=HardwareNames[i];cards[i].Included.Text=HardwareNames[i];help.SetToolTip(cards[i].Included,new[]{"Teclado AULA HERO 68","Placa-mãe MSI 650M PROJECT ZERO • iluminação ARGB","GIGABYTE GeForce RTX 3080 VISION • rev. 2 (adaptador configurado)","Memórias VIPER 7000MHZ • controlador ENE"}[i]);}
+  for(int i=0;i<4;i++){cards[i].State.Name=HardwareNames[i];cards[i].Included.Text=HardwareNames[i];help.SetToolTip(cards[i].Included,new[]{"Teclado AULA HERO 68","Placa-mãe MSI B650M PROJECT ZERO • iluminação ARGB","Placa de vídeo GIGABYTE RTX 3080 • iluminação RGB","Memórias VIPER 7000MHz brancas com RGB"}[i]);}
   try{if(File.Exists(UpgradeFile("favorite-effects.json"))){var saved=new JavaScriptSerializer().Deserialize<int[]>(File.ReadAllText(UpgradeFile("favorite-effects.json")));if(saved!=null)favoriteEffects=new HashSet<int>(saved.Where(i=>i>=0&&i<EffectLibrary.Names.Length));}if(File.Exists(UpgradeFile("color-balance.json"))){var values=new JavaScriptSerializer().Deserialize<ColorBalance[]>(File.ReadAllText(UpgradeFile("color-balance.json")));if(values!=null&&values.Length==4&&values.All(v=>v!=null&&v.Valid()))Calibration.Values=values;}}catch(Exception ex){status.Text="Não foi possível ler as preferências: "+ex.Message;}
   toolsButton=Button("Ferramentas   ▾",surface);toolsButton.SetBounds(U(16),U(161),U(148),U(30));side.Controls.Add(toolsButton);toolsButton.Click+=delegate{if(!busy)ShowUpgradeMenu();};
   compareButton=Button("Comparar",surface);main.Controls.Add(compareButton);compareButton.Click+=delegate{ShowComparison();};

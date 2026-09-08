@@ -193,10 +193,10 @@ class RgbApp:Form {
   var caseApply=new Button {Text="Aplicar ao gabinete",Location=new Point(20,63),Size=new Size(175,39),FlatStyle=FlatStyle.Flat};caseApply.Click+=delegate {SetCabinet(brightness.Value);};cabinet.Controls.Add(caseApply);
   var caseOff=new Button {Text="Apagar gabinete",Location=new Point(210,63),Size=new Size(155,39),FlatStyle=FlatStyle.Flat};caseOff.Click+=delegate {SetCabinet(0);};cabinet.Controls.Add(caseOff);
   cabinet.Controls.Add(new Label {Text="Se a cor voltar sozinha, feche o Mystic Light no MSI Center.",AutoSize=true,ForeColor=Color.Silver,Location=new Point(20,118)});
-  var gpuBox=new GroupBox {Text="RTX 3080 VISION • LOGO RGB",ForeColor=Color.White,Location=new Point(28,495),Size=new Size(644,100),Anchor=AnchorStyles.Top|AnchorStyles.Left|AnchorStyles.Right};Controls.Add(gpuBox);
+  var gpuBox=new GroupBox {Text="GIGABYTE RTX 3080 • LOGO RGB",ForeColor=Color.White,Location=new Point(28,495),Size=new Size(644,100),Anchor=AnchorStyles.Top|AnchorStyles.Left|AnchorStyles.Right};Controls.Add(gpuBox);
   var gpuApply=new Button {Text="Aplicar à RTX",Location=new Point(20,32),Size=new Size(175,39),FlatStyle=FlatStyle.Flat};gpuApply.Click+=delegate {SetGpu(brightness.Value);};gpuBox.Controls.Add(gpuApply);
   var gpuOff=new Button {Text="Apagar logo",Location=new Point(210,32),Size=new Size(155,39),FlatStyle=FlatStyle.Flat};gpuOff.Click+=delegate {SetGpu(0);};gpuBox.Controls.Add(gpuOff);
-  var ramBox=new GroupBox {Text="VIPER ELITE 5 • DOIS MÓDULOS RGB",ForeColor=Color.White,Location=new Point(28,606),Size=new Size(644,130)};Controls.Add(ramBox);
+  var ramBox=new GroupBox {Text="VIPER 7000MHZ BRANCA • DOIS MÓDULOS RGB",ForeColor=Color.White,Location=new Point(28,606),Size=new Size(644,130)};Controls.Add(ramBox);
   var ramStart=new Button {Text="Ativar RAM",Location=new Point(20,32),Size=new Size(155,39),FlatStyle=FlatStyle.Flat};ramBox.Controls.Add(ramStart);
   ramStart.Click+=async delegate {ramStart.Enabled=false;status.Text="Ativando o acesso à RAM...";try {await System.Threading.Tasks.Task.Run(()=>RamBridge.Start());status.Text="Os dois módulos estão disponíveis. Escolha a cor e aplique.";}catch(Exception ex){status.Text=ex.Message;}finally {ramStart.Enabled=true;}};
   var ramApply=new Button {Text="Aplicar à RAM",Location=new Point(190,32),Size=new Size(155,39),FlatStyle=FlatStyle.Flat};ramBox.Controls.Add(ramApply);ramApply.Click+=delegate {SetRam(brightness.Value);};

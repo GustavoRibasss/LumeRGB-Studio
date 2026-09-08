@@ -38,8 +38,8 @@ class DeviceArt:Control {
  protected override void OnPaint(PaintEventArgs e){base.OnPaint(e);var g=e.Graphics;g.SmoothingMode=SmoothingMode.AntiAlias;float artScale=Math.Max(.1f,Math.Min(g.DpiX/96f,Height/90f));g.ScaleTransform(artScale,artScale);Color c=Color.FromArgb(Light.R*Level/100,Light.G*Level/100,Light.B*Level/100);float cx=Width/(2f*artScale);using(var pen=new Pen(Color.FromArgb(66,74,93),1.5f))using(var glow=new Pen(Color.FromArgb(45,c),9))using(var lit=new Pen(c,3))using(var fill=new SolidBrush(c)) {
   if(Kind==0){g.DrawRectangle(pen,cx-116,20,232,56);g.DrawLine(glow,cx-110,13,cx+110,13);g.DrawLine(lit,cx-110,13,cx+110,13);if(BarPreview!=null)BarPreviewRenderer.Paint(g,new RectangleF(cx-110,11,220,4),BarPreview,c,(Environment.TickCount&int.MaxValue)/1000.0);for(int y=0;y<4;y++)for(int x=0;x<15;x++)g.FillRectangle(fill,cx-107+x*14,27+y*11,x==14?14:10,6);}
   if(Kind==1){g.DrawRectangle(pen,cx-60,9,120,72);g.DrawLine(pen,cx+37,9,cx+37,81);for(int y=0;y<3;y++){g.DrawEllipse(glow,cx-35,15+y*21,16,16);g.DrawEllipse(lit,cx-35,15+y*21,16,16);}g.DrawRectangle(lit,cx-5,24,30,4);g.DrawEllipse(glow,cx-4,42,25,25);g.DrawEllipse(lit,cx-4,42,25,25);g.DrawLine(pen,cx+21,50,cx+29,42);g.DrawLine(pen,cx+29,42,cx+29,28);g.DrawLine(pen,cx+18,64,cx+33,64);g.DrawLine(pen,cx+33,64,cx+33,28);}
-  if(Kind==2){g.DrawRectangle(pen,cx-112,20,224,52);g.DrawLine(lit,cx-107,25,cx+107,25);for(int x=0;x<3;x++){g.DrawEllipse(pen,cx-92+x*62,31,33,33);g.DrawLine(pen,cx-75+x*62,36,cx-75+x*62,59);}using(var f=new Font("Segoe UI",8,FontStyle.Bold))g.DrawString("VISION",f,fill,cx+78,47);}
-  if(Kind==3){for(int y=0;y<2;y++){g.DrawRectangle(pen,cx-105,18+y*36,210,24);g.DrawLine(glow,cx-102,18+y*36,cx+102,18+y*36);g.DrawLine(lit,cx-102,18+y*36,cx+102,18+y*36);using(var f=new Font("Segoe UI",8,FontStyle.Bold))g.DrawString("VIPER",f,Brushes.Silver,cx-91,24+y*36);}}
+  if(Kind==2){g.DrawRectangle(pen,cx-112,20,224,52);g.DrawLine(lit,cx-107,25,cx+107,25);for(int x=0;x<3;x++){g.DrawEllipse(pen,cx-92+x*62,31,33,33);g.DrawLine(pen,cx-75+x*62,36,cx-75+x*62,59);}using(var f=new Font("Segoe UI",7,FontStyle.Bold))g.DrawString("GIGABYTE RTX 3080",f,fill,cx-72,47);}
+  if(Kind==3){for(int y=0;y<2;y++){g.DrawRectangle(pen,cx-105,18+y*36,210,24);g.DrawLine(glow,cx-102,18+y*36,cx+102,18+y*36);g.DrawLine(lit,cx-102,18+y*36,cx+102,18+y*36);using(var f=new Font("Segoe UI",7,FontStyle.Bold))g.DrawString("VIPER 7000MHz RGB",f,Brushes.Silver,cx-91,24+y*36);}}
  }}
 }
 class LightCard:Panel {
@@ -47,7 +47,7 @@ class LightCard:Panel {
  public event Action<LightCard> ApplyRequested;
  public LightCard(int kind,LightState state){DoubleBuffered=true;State=state;BackColor=Color.FromArgb(23,28,40);Padding=new Padding(16);Size=new Size(395,244);
   Included=new StudioCheckBox{Text=state.Name,Checked=state.Included,AutoSize=true,ForeColor=Color.White,Location=new Point(16,13),Font=new Font("Segoe UI",11,FontStyle.Bold)};Controls.Add(Included);
-  var subtitle=new Label{Text=new[]{"AULA HERO 68 · teclas + barra LED","MSI PROJECT ZERO · 3 conectores ARGB","GIGABYTE VISION · logo RGB","VIPER ELITE 5 · 2 módulos ENE"}[kind],ForeColor=LumeStudio.Muted,AutoSize=true,Location=new Point(17,42),Font=new Font("Segoe UI",8)};Controls.Add(subtitle);
+  var subtitle=new Label{Text=new[]{"AULA HERO 68 · teclas + barra LED","MSI B650M PROJECT ZERO · 3 conectores ARGB","GIGABYTE RTX 3080 · logo RGB","VIPER 7000MHz branca · 2 módulos RGB"}[kind],ForeColor=LumeStudio.Muted,AutoSize=true,Location=new Point(17,42),Font=new Font("Segoe UI",8)};Controls.Add(subtitle);
   Art=new DeviceArt(kind){Location=new Point(16,65)};Controls.Add(Art);
   Slider=new StudioSlider{Minimum=0,Maximum=100,Value=100,TickStyle=TickStyle.None,BackColor=BackColor,Location=new Point(9,160),Size=new Size(250,30)};Controls.Add(Slider);
   Percent=new Label{Text="100%",ForeColor=Color.White,AutoSize=true,Location=new Point(274,163)};Controls.Add(Percent);
