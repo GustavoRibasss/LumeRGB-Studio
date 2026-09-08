@@ -11,7 +11,7 @@ partial class LumeStudio {
  void InitializeWindowChrome(){
   FormBorderStyle=FormBorderStyle.None;
   windowChrome=new Panel{Dock=DockStyle.None,Height=24,BackColor=Color.FromArgb(17,18,24),Anchor=AnchorStyles.Top|AnchorStyles.Left|AnchorStyles.Right};main.Controls.Add(windowChrome);windowChrome.BringToFront();
-  windowTitle=new Label{Text="ThebestRGB / Studio 22",ForeColor=Color.FromArgb(205,207,220),Font=new Font("Segoe UI",8),AutoSize=false,TextAlign=ContentAlignment.MiddleLeft};windowChrome.Controls.Add(windowTitle);
+  windowTitle=new Label{Text="",ForeColor=Color.FromArgb(205,207,220),Font=new Font("Segoe UI",8),AutoSize=false,TextAlign=ContentAlignment.MiddleLeft};windowChrome.Controls.Add(windowTitle);
   windowMinimize=ChromeButton("—",Color.FromArgb(25,27,35));windowMaximize=ChromeButton("□",Color.FromArgb(25,27,35));windowClose=ChromeButton("×",Color.FromArgb(52,29,39));windowChrome.Controls.Add(windowMinimize);windowChrome.Controls.Add(windowMaximize);windowChrome.Controls.Add(windowClose);
   windowMinimize.Click+=delegate{WindowState=FormWindowState.Minimized;};windowMaximize.Click+=delegate{WindowState=WindowState==FormWindowState.Maximized?FormWindowState.Normal:FormWindowState.Maximized;LayoutWindowChrome();};windowClose.Click+=delegate{Close();};
   windowChrome.MouseDown+=delegate(object s,MouseEventArgs e){DragWindow(e);};windowTitle.MouseDown+=delegate(object s,MouseEventArgs e){DragWindow(e);};Resize+=delegate{LayoutWindowChrome();};Shown+=delegate{windowChrome.BringToFront();};LayoutWindowChrome();

@@ -27,7 +27,7 @@ class StudioButton:Button {
  protected override void OnPaint(PaintEventArgs e){var g=e.Graphics;g.SmoothingMode=SmoothingMode.AntiAlias;g.Clear(Parent==null?Color.FromArgb(15,16,20):Parent.BackColor);var rect=new Rectangle(0,0,Width-1,Height-1);using(var path=new GraphicsPath()){int r=12;path.AddArc(rect.Left,rect.Top,r,r,180,90);path.AddArc(rect.Right-r,rect.Top,r,r,270,90);path.AddArc(rect.Right-r,rect.Bottom-r,r,r,0,90);path.AddArc(rect.Left,rect.Bottom-r,r,r,90,90);path.CloseFigure();Color c=Enabled?BackColor:Color.FromArgb(28,29,35);if(Enabled&&hoverBlend>0)c=ControlPaint.Light(c,.12f*hoverBlend);using(var b=new SolidBrush(c))g.FillPath(b,path);using(var p=new Pen(Color.FromArgb(Enabled?50:34,52,63)))g.DrawPath(p,path);}TextRenderer.DrawText(g,Text,Font,rect,Enabled?ForeColor:Color.FromArgb(105,108,122),TextFormatFlags.HorizontalCenter|TextFormatFlags.VerticalCenter|TextFormatFlags.EndEllipsis);if(Focused)ControlPaint.DrawFocusRectangle(g,new Rectangle(4,4,Width-9,Height-9));}
 }
 class SetupStage:Panel {
- public SetupStage(){DoubleBuffered=true;BackColor=Color.FromArgb(15,16,21);}
+ public SetupStage(){SetStyle(ControlStyles.ResizeRedraw,true);DoubleBuffered=true;BackColor=Color.FromArgb(15,16,21);}
  protected override void OnPaint(PaintEventArgs e){base.OnPaint(e);var g=e.Graphics;g.SmoothingMode=SmoothingMode.AntiAlias;using(var pen=new Pen(Color.FromArgb(34,36,46)))g.DrawRectangle(pen,0,0,Width-1,Height-1);using(var font=new Font("Segoe UI",8))using(var b=new SolidBrush(Color.FromArgb(137,139,155)))g.DrawString("PRÉVIA DO SETUP",font,b,18,15);using(var font=new Font("Segoe UI",8))using(var b=new SolidBrush(Color.FromArgb(100,104,122)))g.DrawString("Prévia por zona • confira o resultado nos LEDs",font,b,18,Height-26);}
 }
 

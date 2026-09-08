@@ -4,11 +4,11 @@ using System.Linq;
 using System.Windows.Forms;
 
 partial class LumeStudio {
- internal const string ReleaseVersion="22.6.0";
+ internal const string ReleaseVersion="22.6.1";
  bool designReady,designLayout;
  Button newProfile,editProfile;
  void InitializeDesign(){
-  Text="ThebestRGB · "+ReleaseVersion;windowTitle.Text=Text;Muted=Color.FromArgb(168,174,192);
+  Text="ThebestRGB · "+ReleaseVersion;windowTitle.Text="";Muted=Color.FromArgb(168,174,192);
   MinimumSize=new Size(880,600);
   foreach(var c in new Control[]{profileFormTitle,profileNameLabel,profileNameFrame,profileDescriptionLabel,profileDescriptionFrame,profileNote})c.Visible=false;
   foreach(Control c in side.Controls)if(c is Label&&c.Text.StartsWith("S T U D I O"))c.Text="STUDIO / "+ReleaseVersion;
@@ -16,7 +16,7 @@ partial class LumeStudio {
   editProfile=Button("Editar perfil",surface);side.Controls.Add(editProfile);editProfile.Click+=delegate{EditProfileDetails(false);};
   profileEmpty.Text="Seu setup, do seu jeito.\n\nCrie seu primeiro perfil.";
   foreach(var card in cards){card.BackColor=Color.FromArgb(23,26,35);card.Slider.BackColor=card.BackColor;card.Status.BackColor=Color.FromArgb(32,36,47);card.Status.TextAlign=ContentAlignment.MiddleCenter;card.Status.ForeColor=Muted;card.Status.TextChanged+=delegate{card.Status.ForeColor=card.Status.Text=="Aplicado"?Color.FromArgb(116,226,179):card.Status.Text=="Falhou"?Color.Salmon:Muted;};}
-  InitializeReleaseFeatures();designReady=true;LayoutDesign();
+  InitializeReleaseFeatures();InitializeScrollBar();designReady=true;LayoutDesign();
  }
  void EditProfileDetails(bool fresh){if(busy)return;int index=profileList.SelectedIndex;using(var f=new Form{Text=fresh?"Novo perfil":"Editar perfil",ClientSize=new Size(420,300),BackColor=surface,ForeColor=Color.White,Font=new Font("Segoe UI",10),StartPosition=FormStartPosition.CenterParent,MaximizeBox=false,MinimizeBox=false}){
   var name=new TextBox{Text=fresh?"":index>=0?profiles[index].Name:profileName.Text,MaxLength=40,BackColor=Color.FromArgb(32,36,47),ForeColor=Color.White};name.SetBounds(24,66,372,30);
@@ -36,7 +36,7 @@ partial class LumeStudio {
   int contentBottom=narrow?bottom+hero.Height+pad:Math.Max(bottom-gap,hero.Bottom)+U(4);main.AutoScroll=true;main.AutoScrollMinSize=new Size(0,contentBottom);shortcutHint.Visible=false;
   profileListFrame.SetBounds(U(16),U(224),U(148),Math.Max(U(70),side.ClientSize.Height-U(470)));profileList.SetBounds(1,1,profileListFrame.Width-2,profileListFrame.Height-2);profileEmpty.SetBounds(U(10),U(20),U(128),U(90));int sy=profileListFrame.Bottom+U(12);
   newProfile.SetBounds(U(16),sy,U(148),U(34));editProfile.SetBounds(U(16),sy+U(42),U(148),U(32));save.SetBounds(U(16),sy+U(82),U(148),U(34));save.Text="Salvar setup";load.SetBounds(U(16),sy+U(124),U(72),U(32));remove.SetBounds(U(94),sy+U(124),U(70),U(32));diagnostic.Visible=false;
-  LayoutWindowChrome();
+  stage.Invalidate(true);LayoutWindowChrome();UpdateScrollBar();
  }finally{side.ResumeLayout();main.ResumeLayout();designLayout=false;}}
  void LayoutDesignCard(LightCard c,int i){int w=c.Width;c.Included.SetBounds(U(16),U(12),w-U(i==0?124:32),U(28));foreach(Control item in c.Controls)if(item is Label&&item!=c.Status&&item!=c.Percent&&!connectionLabels.Contains(item))item.Visible=false;
   connectionLabels[i].SetBounds(U(16),U(43),w-U(32),U(22));connectionLabels[i].BackColor=c.BackColor;
