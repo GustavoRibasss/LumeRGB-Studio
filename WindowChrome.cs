@@ -10,9 +10,9 @@ partial class LumeStudio {
  const int WmNcHitTest=0x84,HitLeft=10,HitRight=11,HitTop=12,HitTopLeft=13,HitTopRight=14,HitBottom=15,HitBottomLeft=16,HitBottomRight=17;
  void InitializeWindowChrome(){
   FormBorderStyle=FormBorderStyle.None;
-  windowChrome=new Panel{Dock=DockStyle.None,Height=24,BackColor=Color.FromArgb(17,18,24),Anchor=AnchorStyles.Top|AnchorStyles.Left|AnchorStyles.Right};main.Controls.Add(windowChrome);windowChrome.BringToFront();
+  windowChrome=new Panel{Dock=DockStyle.None,Height=24,BackColor=Color.FromArgb(10,11,15),Anchor=AnchorStyles.Top|AnchorStyles.Left|AnchorStyles.Right};main.Controls.Add(windowChrome);windowChrome.BringToFront();
   windowTitle=new Label{Text="",ForeColor=Color.FromArgb(205,207,220),Font=new Font("Segoe UI",8),AutoSize=false,TextAlign=ContentAlignment.MiddleLeft};windowChrome.Controls.Add(windowTitle);
-  windowMinimize=ChromeButton("—",Color.FromArgb(25,27,35));windowMaximize=ChromeButton("□",Color.FromArgb(25,27,35));windowClose=ChromeButton("×",Color.FromArgb(52,29,39));windowChrome.Controls.Add(windowMinimize);windowChrome.Controls.Add(windowMaximize);windowChrome.Controls.Add(windowClose);
+  windowMinimize=ChromeButton("—",Color.FromArgb(10,11,15));windowMaximize=ChromeButton("□",Color.FromArgb(10,11,15));windowClose=ChromeButton("×",Color.FromArgb(10,11,15));windowChrome.Controls.Add(windowMinimize);windowChrome.Controls.Add(windowMaximize);windowChrome.Controls.Add(windowClose);
   windowMinimize.Click+=delegate{WindowState=FormWindowState.Minimized;};windowMaximize.Click+=delegate{WindowState=WindowState==FormWindowState.Maximized?FormWindowState.Normal:FormWindowState.Maximized;LayoutWindowChrome();};windowClose.Click+=delegate{Close();};
   windowChrome.MouseDown+=delegate(object s,MouseEventArgs e){DragWindow(e);};windowTitle.MouseDown+=delegate(object s,MouseEventArgs e){DragWindow(e);};Resize+=delegate{LayoutWindowChrome();};Shown+=delegate{windowChrome.BringToFront();};LayoutWindowChrome();
   if(ClientSize.Height<760){int target=Math.Min(800,Screen.PrimaryScreen.WorkingArea.Height-38);if(target>ClientSize.Height)ClientSize=new Size(ClientSize.Width,target);}
