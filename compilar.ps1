@@ -9,6 +9,10 @@ if (Test-Path -LiteralPath $bundle) {
     $resourceArgs += "/resource:$($_.FullName),OpenRGB.$relative"
   }
 }
+$assets = Join-Path $PSScriptRoot 'HardwareAssets'
+if (Test-Path -LiteralPath $assets) {
+  Get-ChildItem -LiteralPath $assets -File | ForEach-Object { $resourceArgs += "/resource:$($_.FullName),Hardware.$($_.Name)" }
+}
 & $compiler /nologo "/win32manifest:$PSScriptRoot/app.manifest" "/win32icon:$PSScriptRoot/LumeStudio.ico" /target:winexe /platform:x64 /main:LumeStudio /r:System.Windows.Forms.dll /r:System.Drawing.dll /r:System.Web.Extensions.dll "/out:$PSScriptRoot/ThebestRGB.exe" $sources $resourceArgs
 if ($LASTEXITCODE -ne 0) { throw 'Falha na compilação.' }
 
