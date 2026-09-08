@@ -4,7 +4,7 @@ using System.Linq;
 using System.Windows.Forms;
 
 partial class LumeStudio {
- internal const string ReleaseVersion="22.6.2";
+ internal const string ReleaseVersion="22.6.3";
  bool designReady,designLayout;
  Button newProfile,editProfile;
  void InitializeDesign(){

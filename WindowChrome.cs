@@ -10,7 +10,7 @@ partial class LumeStudio {
  const int WmNcHitTest=0x84,HitLeft=10,HitRight=11,HitTop=12,HitTopLeft=13,HitTopRight=14,HitBottom=15,HitBottomLeft=16,HitBottomRight=17;
  void InitializeWindowChrome(){
   FormBorderStyle=FormBorderStyle.None;
-  windowChrome=new Panel{Dock=DockStyle.None,Height=24,BackColor=Color.FromArgb(10,11,15),Anchor=AnchorStyles.Top|AnchorStyles.Left|AnchorStyles.Right};main.Controls.Add(windowChrome);windowChrome.BringToFront();
+  windowChrome=new Panel{Dock=DockStyle.None,Height=24,BackColor=Color.FromArgb(10,11,15),Anchor=AnchorStyles.Top|AnchorStyles.Left|AnchorStyles.Right};Controls.Add(windowChrome);windowChrome.BringToFront();
   windowTitle=new Label{Text="",ForeColor=Color.FromArgb(205,207,220),Font=new Font("Segoe UI",8),AutoSize=false,TextAlign=ContentAlignment.MiddleLeft};windowChrome.Controls.Add(windowTitle);
   windowMinimize=ChromeButton("—",Color.FromArgb(10,11,15));windowMaximize=ChromeButton("□",Color.FromArgb(10,11,15));windowClose=ChromeButton("×",Color.FromArgb(10,11,15));windowChrome.Controls.Add(windowMinimize);windowChrome.Controls.Add(windowMaximize);windowChrome.Controls.Add(windowClose);
   windowMinimize.Click+=delegate{WindowState=FormWindowState.Minimized;};windowMaximize.Click+=delegate{WindowState=WindowState==FormWindowState.Maximized?FormWindowState.Normal:FormWindowState.Maximized;LayoutWindowChrome();};windowClose.Click+=delegate{Close();};
@@ -18,7 +18,7 @@ partial class LumeStudio {
   if(ClientSize.Height<760){int target=Math.Min(800,Screen.PrimaryScreen.WorkingArea.Height-38);if(target>ClientSize.Height)ClientSize=new Size(ClientSize.Width,target);}
  }
  Button ChromeButton(string text,Color color){var b=Button(text,color);b.Font=new Font("Segoe UI",10);b.ForeColor=Color.FromArgb(225,226,235);b.TabStop=false;return b;}
- void LayoutWindowChrome(){if(windowChrome==null)return;windowChrome.SetBounds(0,0,main.Width,24);windowChrome.BringToFront();int width=44;windowTitle.SetBounds(12,0,Math.Max(100,windowChrome.Width-width*3-20),windowChrome.Height);windowMinimize.SetBounds(windowChrome.Width-width*3,2,width-2,windowChrome.Height-4);windowMaximize.SetBounds(windowChrome.Width-width*2,2,width-2,windowChrome.Height-4);windowClose.SetBounds(windowChrome.Width-width,2,width-2,windowChrome.Height-4);windowMaximize.Text=WindowState==FormWindowState.Maximized?"❐":"□";}
+ void LayoutWindowChrome(){if(windowChrome==null)return;windowChrome.SetBounds(main.Left,main.Top,main.Width,24);windowChrome.BringToFront();int width=44;windowTitle.SetBounds(12,0,Math.Max(100,windowChrome.Width-width*3-20),windowChrome.Height);windowMinimize.SetBounds(windowChrome.Width-width*3,2,width-2,windowChrome.Height-4);windowMaximize.SetBounds(windowChrome.Width-width*2,2,width-2,windowChrome.Height-4);windowClose.SetBounds(windowChrome.Width-width,2,width-2,windowChrome.Height-4);windowMaximize.Text=WindowState==FormWindowState.Maximized?"❐":"□";}
  void DragWindow(MouseEventArgs e){if(e.Button!=MouseButtons.Left||WindowState==FormWindowState.Maximized)return;ReleaseCapture();SendMessage(Handle,0xA1,(IntPtr)2,IntPtr.Zero);}
  [System.Runtime.InteropServices.DllImport("user32.dll")] static extern bool ReleaseCapture();
  [System.Runtime.InteropServices.DllImport("user32.dll")] static extern IntPtr SendMessage(IntPtr hwnd,int msg,IntPtr wParam,IntPtr lParam);
