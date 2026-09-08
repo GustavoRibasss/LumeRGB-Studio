@@ -10,8 +10,11 @@ static class DarkDialogChrome {
   if(form==null||form.FormBorderStyle==FormBorderStyle.None)return;
   Size initial=form.ClientSize;Size min=form.MinimumSize;bool fixedSize=form.MaximumSize.Width>0&&form.MaximumSize.Height>0;
   Control[] content=new Control[form.Controls.Count];form.Controls.CopyTo(content,0);
+  Rectangle[] originalBounds=new Rectangle[content.Length];for(int i=0;i<content.Length;i++)originalBounds[i]=content[i].Bounds;
+  form.SuspendLayout();
   form.FormBorderStyle=FormBorderStyle.None;form.MaximumSize=Size.Empty;form.MinimumSize=Size.Empty;form.ClientSize=new Size(initial.Width,initial.Height+HeaderHeight);form.Padding=new Padding(form.Padding.Left,form.Padding.Top+HeaderHeight,form.Padding.Right,form.Padding.Bottom);
-  foreach(Control c in content)if(c.Dock==DockStyle.None)c.Top+=HeaderHeight;
+  for(int i=0;i<content.Length;i++)if(content[i].Dock==DockStyle.None){var bounds=originalBounds[i];bounds.Y+=HeaderHeight;content[i].Bounds=bounds;}
+  form.ResumeLayout(false);
   if(min.Width>0||min.Height>0)form.MinimumSize=new Size(Math.Max(0,min.Width),Math.Max(0,min.Height+HeaderHeight));
   if(fixedSize)form.MaximumSize=form.MinimumSize=form.ClientSize;
   var bar=new Panel{BackColor=Color.FromArgb(17,18,24),Anchor=AnchorStyles.Top|AnchorStyles.Left|AnchorStyles.Right};form.Controls.Add(bar);

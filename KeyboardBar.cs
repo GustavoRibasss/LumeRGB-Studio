@@ -40,7 +40,7 @@ partial class LumeStudio {
    var keyboard=cards[0].State.Copy();
    await Task.Run(()=>{lock(Hid.KeyboardIoLock){var oldBalance=Hid.ActiveBarBalance;Hid.ActiveBarBalance=Calibration.Values[0].Copy();Hid.BarSettings=settings.Copy();try{if(barWriter!=null)barWriter(settings,Hid.LastKeyboardColor,Hid.LastKeyboardBrightness);else Hid.ApplyBar(Hid.LastKeyboardColor,Hid.LastKeyboardBrightness);}catch{Hid.BarSettings=previous;Hid.ActiveBarBalance=oldBalance;throw;}}});pendingBar=settings.Copy();if(appliedDevices[0]!=null)appliedDevices[0].Bar=settings.Copy();
    try{Directory.CreateDirectory(Path.GetDirectoryName(BarSettingsFile));File.WriteAllText(BarSettingsFile,new JavaScriptSerializer().Serialize(settings));}catch(Exception ex){status.Text="Barra aplicada, mas não foi possível salvar: "+ex.Message;return status.Text;}
-   status.Text="Configuração enviada à barra LED do teclado.";return null;
+   SaveLastConfiguration();status.Text="Configuração enviada à barra LED do teclado.";return null;
   }catch(Exception ex){Hid.BarSettings=previous;return "Não foi possível aplicar à barra: "+ex.Message;}finally{SetBusy(false);}
  }
 }
@@ -52,7 +52,7 @@ class KeyboardBarForm:Form {
   Controls.Add(new Label{Text="Barra LED do teclado",Font=new Font("Segoe UI",20,FontStyle.Bold),AutoSize=true,Location=new Point(22,18)});
   Controls.Add(new Label{Text="Modo da barra",AutoSize=true,Location=new Point(24,78)});
   var mode=new ComboBox{DropDownStyle=ComboBoxStyle.DropDownList,BackColor=Color.FromArgb(35,36,45),ForeColor=Color.White,FlatStyle=FlatStyle.Flat};mode.Items.AddRange(ModeNames);mode.SetBounds(24,104,432,32);mode.SelectedIndex=Array.IndexOf(ModeIds,settings.Mode);Controls.Add(mode);
-  mode.Visible=false;var modeButton=LumeStudio.Button(ModeNames[mode.SelectedIndex]+"   ▾",Color.FromArgb(35,36,45));modeButton.SetBounds(24,104,432,32);Controls.Add(modeButton);var menu=new ContextMenuStrip{ShowImageMargin=false,BackColor=BackColor,ForeColor=Color.White,Renderer=new StudioMenuRenderer()};for(int i=0;i<ModeNames.Length;i++){int index=i;menu.Items.Add(ModeNames[i],null,delegate{mode.SelectedIndex=index;modeButton.Text=ModeNames[index]+"   ▾";});}modeButton.Click+=delegate{menu.Show(modeButton,new Point(0,modeButton.Height));};FormClosed+=delegate{menu.Dispose();};
+  mode.Visible=false;var modeButton=LumeStudio.Button(ModeNames[mode.SelectedIndex]+"   ▾",Color.FromArgb(35,36,45));modeButton.TextAlign=ContentAlignment.MiddleLeft;modeButton.Padding=new Padding(12,0,0,0);modeButton.SetBounds(24,104,432,32);Controls.Add(modeButton);var menu=new ContextMenuStrip{ShowImageMargin=false,BackColor=BackColor,ForeColor=Color.White,Renderer=new StudioMenuRenderer()};for(int i=0;i<ModeNames.Length;i++){int index=i;menu.Items.Add(ModeNames[i],null,delegate{mode.SelectedIndex=index;modeButton.Text=ModeNames[index]+"   ▾";});}modeButton.Click+=delegate{menu.Show(modeButton,new Point(0,modeButton.Height));};FormClosed+=delegate{menu.Dispose();};
   var multi=new StudioCheckBox{Text="Multicolorido",Checked=settings.Multicolor,ForeColor=Color.White};multi.SetBounds(24,151,180,30);Controls.Add(multi);
   var color=LumeStudio.Button("Escolher cor",Color.FromArgb(settings.ColorValue|unchecked((int)0xff000000)));color.SetBounds(260,149,196,32);color.ForeColor=color.BackColor.GetBrightness()>.6?Color.Black:Color.White;Controls.Add(color);
   var brightness=new StudioSlider{Minimum=0,Maximum=4,Value=settings.Brightness,BackColor=BackColor};brightness.SetBounds(20,222,315,28);Controls.Add(brightness);

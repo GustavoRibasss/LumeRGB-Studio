@@ -63,7 +63,7 @@ partial class LumeStudio {
  async Task ApplyCards(List<LightCard> targets){
   if(busy)return;
   if(targets.Count==0){status.Text="Selecione ao menos um dispositivo.";return;}
-  SetBusy(true);await StopEffect();applySucceeded=false;applyError="";SetBusy(false);
+  SaveLastConfiguration();SetBusy(true);await StopEffect();applySucceeded=false;applyError="";SetBusy(false);
   if(blackoutActive){blackoutActive=false;lightsOffRestore=null;}if(targets.Contains(cards[0])){Hid.BarSettings=pendingBar.Copy();Hid.ActiveBarBalance=Calibration.Values[0].Copy();}if(effectMode.SelectedIndex==0){await ApplyStaticCards(targets);return;}
   int mode=effectMode.SelectedIndex,speed=effectSpeed.Value;
   var states=targets.Select(c=>c.State.Copy()).ToArray();
