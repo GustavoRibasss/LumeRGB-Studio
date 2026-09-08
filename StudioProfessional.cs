@@ -21,7 +21,7 @@ partial class LumeStudio {
   side.Width=180;side.BackColor=Color.FromArgb(14,15,19);side.AutoScroll=false;main.BackColor=BackColor;InitializeWindowChrome();
   help=new ToolTip{AutoPopDelay=10000};
   foreach(Control item in side.Controls)if(!(item==profileList||item==profileName||item==save||item==load||item==remove))item.Visible=false;
-  side.Controls.Add(Label("lume",28,Color.White,22,22));side.Controls.Add(Label("S T U D I O  /  2 2",8,Muted,24,72));
+  side.Controls.Add(Label("ThebestRGB",18,Color.White,22,22));side.Controls.Add(Label("S T U D I O  /  2 2",8,Muted,24,72));
   var nav=Button("Iluminação",Color.FromArgb(37,32,52));nav.SetBounds(16,116,148,38);side.Controls.Add(nav);var navMarker=new Panel{BackColor=Color.FromArgb(166,136,255),Location=new Point(16,116),Size=new Size(3,38)};side.Controls.Add(navMarker);nav.Click+=delegate{main.AutoScrollPosition=Point.Empty;};
   side.Controls.Add(Label("MEUS PERFIS",8,Muted,23,195));profileCount=Label("0 salvos",7,Muted,121,196);side.Controls.Add(profileCount);
   profileListFrame=new Panel{Location=new Point(16,225),Size=new Size(148,140),BackColor=surface};profileListFrame.Paint+=delegate(object sender,PaintEventArgs e){using(var p=new Pen(Color.FromArgb(48,48,61)))e.Graphics.DrawRectangle(p,0,0,profileListFrame.Width-1,profileListFrame.Height-1);using(var p=new Pen(Color.FromArgb(78,61,112),2))e.Graphics.DrawLine(p,1,1,profileListFrame.Width-2,1);};side.Controls.Add(profileListFrame);

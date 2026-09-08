@@ -75,7 +75,7 @@ partial class LumeStudio:Form {
   Text="ThebestRGB Studio · 21";Icon=LoadAppIcon();BackColor=Color.FromArgb(12,16,24);ForeColor=Color.White;Font=new Font("Segoe UI",9);ClientSize=new Size(1140,Math.Min(918,Screen.PrimaryScreen.WorkingArea.Height-65));MinimumSize=new Size(1050,720);StartPosition=FormStartPosition.CenterScreen;AutoScaleDimensions=new SizeF(96,96);AutoScaleMode=AutoScaleMode.Dpi;
   side=new Panel{Dock=DockStyle.Left,Width=208,BackColor=Color.FromArgb(17,21,31)};Controls.Add(side);
   main=new Panel{Dock=DockStyle.Fill,AutoScroll=false,Padding=new Padding(26)};Controls.Add(main);main.BringToFront();
-  side.Controls.Add(Label("LUME",25,Color.White,23,28));side.Controls.Add(Label("RGB STUDIO",9,Muted,27,72));
+  side.Controls.Add(Label("THEBESTRGB",18,Color.White,23,28));side.Controls.Add(Label("RGB STUDIO",9,Muted,27,72));
   var selected=Button("●   Iluminação",Color.FromArgb(42,34,68));selected.SetBounds(16,122,176,42);side.Controls.Add(selected);selected.Click+=delegate{main.AutoScrollPosition=Point.Empty;};
   side.Controls.Add(Label("PERFIS SALVOS",9,Muted,24,197));
   profileList=new ListBox{Location=new Point(20,226),Size=new Size(168,184),BackColor=side.BackColor,ForeColor=Color.White,BorderStyle=BorderStyle.None,Font=new Font("Segoe UI",10),IntegralHeight=false};side.Controls.Add(profileList);
