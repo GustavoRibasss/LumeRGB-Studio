@@ -26,7 +26,7 @@ partial class ThebestRGB {
   ok.Click+=delegate{if(string.IsNullOrWhiteSpace(name.Text)){name.Focus();return;}profileName.Text=name.Text.Trim();profileDescription.Text=description.Text;SaveProfile();f.Close();};DarkDialogChrome.Attach(f,f.Text);f.ShowDialog(this);
  }}
  void LayoutDesign(){if(!designReady||designLayout)return;designLayout=true;main.SuspendLayout();side.SuspendLayout();try{
-  main.AutoScrollPosition=Point.Empty;int pad=U(24),gap=U(16),width=main.ClientSize.Width-pad*2-U(18);bool narrow=width<U(940);int left=narrow?width:width-U(296);int cols=left<U(760)?1:2;int stageH=main.ClientSize.Height<U(700)?U(156):U(240);int y=U(128);LayoutFeatures();resetSetup.SetBounds(U(467),U(91),U(124),U(30));testSelected.SetBounds(U(599),U(91),U(151),U(30));if(narrow){resetSetup.SetBounds(U(24),U(130),U(124),U(30));testSelected.SetBounds(U(160),U(130),U(151),U(30));y=U(176);}
+  main.AutoScrollPosition=Point.Empty;int pad=U(24),gap=U(16),width=main.ClientSize.Width-pad*2-U(18);bool narrow=width<U(940);int left=narrow?width:width-U(296);int cols=left<U(760)?1:2;int stageH=main.ClientSize.Height<U(700)?U(156):U(240);int y=U(128);LayoutFeatures();resetSetup.SetBounds(U(467),U(91),U(166),U(30));testSelected.SetBounds(U(645),U(91),U(236),U(30));if(narrow){resetSetup.SetBounds(U(24),U(130),U(166),U(30));testSelected.SetBounds(U(202),U(130),U(236),U(30));y=U(176);}
   stage.SetBounds(pad,y,left,stageH);quickProfiles.SetBounds(U(16),stageH-U(30),left-U(32),U(28));quickProfiles.Visible=profiles.Any(p=>p.Favorite);
   deviceHeading.SetBounds(pad,y+stageH+U(21),U(120),U(22));selectionSummary.SetBounds(pad+U(118),y+stageH+U(21),U(120),U(22));
   selectAll.SetBounds(pad+left-U(146),y+stageH+U(12),U(146),U(32));compareButton.SetBounds(pad+left-U(258),y+stageH+U(12),U(102),U(32));
@@ -36,7 +36,7 @@ partial class ThebestRGB {
   int contentBottom=narrow?bottom+hero.Height+pad:Math.Max(bottom-gap,hero.Bottom)+U(4);main.AutoScroll=true;main.AutoScrollMinSize=new Size(0,contentBottom);shortcutHint.Visible=false;
   profileListFrame.SetBounds(U(16),U(224),U(148),Math.Max(U(70),side.ClientSize.Height-U(470)));profileList.SetBounds(1,1,profileListFrame.Width-2,profileListFrame.Height-2);profileEmpty.SetBounds(U(10),U(20),U(128),U(90));int sy=profileListFrame.Bottom+U(12);
   newProfile.SetBounds(U(16),sy,U(148),U(34));editProfile.SetBounds(U(16),sy+U(42),U(148),U(32));save.SetBounds(U(16),sy+U(82),U(148),U(34));save.Text="Salvar setup";load.SetBounds(U(16),sy+U(124),U(72),U(32));remove.SetBounds(U(94),sy+U(124),U(70),U(32));diagnostic.Visible=false;
-  stage.Invalidate(true);LayoutWindowChrome();UpdateScrollBar();
+  if(powerButton!=null){powerButton.SetBounds(Math.Max(0,footer.ClientSize.Width-U(158)),U(10),U(142),U(34));status.Width=Math.Max(U(100),powerButton.Left-status.Left-U(16));}stage.Invalidate(true);LayoutWindowChrome();UpdateScrollBar();
  }finally{side.ResumeLayout();main.ResumeLayout();designLayout=false;}}
  void LayoutDesignCard(LightCard c,int i){int w=c.Width;c.Included.SetBounds(U(16),U(12),w-U(i==0?124:32),U(28));foreach(Control item in c.Controls)if(item is Label&&item!=c.Status&&item!=c.Percent&&!connectionLabels.Contains(item))item.Visible=false;
   connectionLabels[i].SetBounds(U(16),U(43),w-U(32),U(22));connectionLabels[i].BackColor=c.BackColor;
