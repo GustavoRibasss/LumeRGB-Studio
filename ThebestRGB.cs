@@ -96,7 +96,7 @@ partial class ThebestRGB:Form {
   Color[] palette={Color.White,Color.FromArgb(0,224,255),Color.FromArgb(160,96,255),Color.FromArgb(255,60,136),Color.FromArgb(255,160,32)};
   for(int i=0;i<palette.Length;i++){Color c=palette[i];var b=Button("",c);b.SetBounds(19+i*31,87,22,15);hero.Controls.Add(b);b.Click+=delegate{SetGlobal(c);};new ToolTip().SetToolTip(b,"#"+c.R.ToString("X2")+c.G.ToString("X2")+c.B.ToString("X2"));}
   hero.Controls.Add(Label("BRILHO DOS SELECIONADOS",8,Muted,266,14));master=new StudioSlider{Minimum=0,Maximum=100,Value=100,TickStyle=TickStyle.None,BackColor=hero.BackColor,Location=new Point(256,42),Size=new Size(230,32)};hero.Controls.Add(master);
-  masterValue=Label("100%",10,Color.White,489,48);hero.Controls.Add(masterValue);master.ValueChanged+=delegate{masterValue.Text=master.Value+"%";foreach(var c in cards.Where(c=>c.State.Included)){c.State.Brightness=master.Value;c.RefreshState(true);c.Status.Text="Não aplicado";}};
+  masterValue=Label("100%",10,Color.White,489,48);hero.Controls.Add(masterValue);master.ValueChanged+=delegate{masterValue.Text=master.Value+"%";if(colorRamp!=null)colorRamp.Value=master.Value;foreach(var c in cards.Where(c=>c.State.Included)){c.State.Brightness=master.Value;c.RefreshState(true);c.Status.Text="Não aplicado";}};
   all=Button("Aplicar selecionados",accent);all.SetBounds(603,38,235,40);hero.Controls.Add(all);all.Click+=async delegate{await ApplyCards(cards.Where(c=>c.State.Included).ToList());};
   hero.Controls.Add(Label("Alterações exigem Aplicar.",8,Muted,266,88));
   string[] names={"Teclado","Gabinete","Placa de vídeo","Memórias"};
