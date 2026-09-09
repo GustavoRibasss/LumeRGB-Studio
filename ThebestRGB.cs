@@ -110,9 +110,27 @@ InitializeEffects();InitializeEditor();InitializeProfessional();InitializeFeatur
 void SetGlobal(Color c){global=c;pick.BackColor=global;pick.ForeColor=global.GetBrightness()>.6?Color.Black:Color.White;hex.Text="#"+global.R.ToString("X2")+global.G.ToString("X2")+global.B.ToString("X2");if(colorRamp!=null&&!choosingTone)colorRamp.ResetTone(global);foreach(var card in cards.Where(x=>x.State.Included)){card.State.R=global.R;card.State.G=global.G;card.State.B=global.B;card.RefreshState(false);card.Status.Text="Não aplicado";}status.Text="Cor preparada para os dispositivos selecionados.";TrackSetup();if(!choosingTone)RememberColor(c);QueueAutoApply();}
  void ApplyHex(){string value=hex.Text.Trim();if(!value.StartsWith("#"))value="#"+value;int n;if(value.Length!=7||!int.TryParse(value.Substring(1),System.Globalization.NumberStyles.HexNumber,null,out n)){status.Text="Use uma cor hexadecimal como #A060FF.";return;}Color c=Color.FromArgb((n>>16)&255,(n>>8)&255,n&255);if(c.ToArgb()!=global.ToArgb())SetGlobal(c);}
  void SetBusy(bool value){busy=value;if(configure!=null)configure.Enabled=!value;if(effectMode!=null){effectMode.Enabled=effectSpeed.Enabled=!value;effectStop.Enabled=!value&&!effectTask.IsCompleted;}all.Enabled=activate.Enabled=save.Enabled=load.Enabled=remove.Enabled=pick.Enabled=hex.Enabled=master.Enabled=profileList.Enabled=profileName.Enabled=!value;foreach(var c in cards)c.Enabled=!value;Cursor=value?Cursors.WaitCursor:Cursors.Default;UpdateEffectControls();if(verifyDevices!=null){verifyDevices.Enabled=presetButton.Enabled=!value;undoSetup.Enabled=!value&&undoStates.Count>0;}UpdateMaxState();}
- async Task ApplyStaticCards(List<LightCard> targets){if(busy)return;if(targets.Count==0){status.Text="Selecione pelo menos um dispositivo.";return;}SetBusy(true);status.Text="Aplicando iluminação...";var states=targets.Select(c=>c.State.Copy()).ToArray();int successes=0;var errors=new List<string>();
-  try{for(int i=0;i<targets.Count;i++){LightState s=states[i];int index=cards.IndexOf(targets[i]);targets[i].Status.Text="Enviando...";status.Text="Aplicando "+(i+1)+" de "+targets.Count+": "+s.Name+"…";try{await Task.Run(()=>{if(effectWriter!=null){effectWriter(index,Calibration.Adjust(index,s.Color),s.Brightness);return;}Color from; if(!lastSentColors.TryGetValue(index,out from))from=Color.Black;for(int step=1;step<=4;step++){SendStaticFrame(index,EffectOptions.Mix(from,s.Color,step/4.0),s.Brightness);Thread.Sleep(38);}lastSentColors[index]=s.Color;});targets[i].Status.Text="Aplicado";RecordApplied(index,s,0,effectSpeed.Value,effectOptions[0],pendingBar);successes++;}catch(Exception ex){targets[i].Status.Text="Falhou";errors.Add(s.Name+": "+ex.Message);}}applySucceeded=errors.Count==0;applyError=string.Join(" | ",errors.ToArray());status.Text=errors.Count==0?"Aplicado com sucesso em "+successes+" dispositivo(s). Confira os LEDs.":successes+" aplicado(s); "+string.Join(" | ",errors.ToArray());}
-  finally{SetBusy(false);}
+ async Task ApplyStaticCards(List<LightCard> targets){
+  if(busy)return;if(targets.Count==0){status.Text="Selecione pelo menos um dispositivo.";return;}
+  SetBusy(true);status.Text="Aplicando iluminação...";
+  var states=targets.Select(c=>c.State.Copy()).ToArray();var indices=targets.Select(c=>cards.IndexOf(c)).ToArray();
+  var origins=indices.Select(i=>lastSentColors.ContainsKey(i)?lastSentColors[i]:Color.Black).ToArray();
+  var balances=indices.Select(i=>Calibration.Values[i].Copy()).ToArray();var errors=new List<string>();int successes=0;
+  try{
+   var sends=targets.Select(async (card,i)=>{
+    var state=states[i];int index=indices[i];card.Status.Text="Enviando...";
+    try{
+     await Task.Run(()=>{
+      if(effectWriter!=null){effectWriter(index,balances[i].Apply(state.Color),state.Brightness);return;}
+      if(index==3){SendBalancedStaticFrame(index,state.Color,state.Brightness,balances[i]);return;}
+      for(int step=1;step<=4;step++){SendBalancedStaticFrame(index,EffectOptions.Mix(origins[i],state.Color,step/4.0),state.Brightness,balances[i]);if(step<4)Thread.Sleep(20);}
+     });
+     lastSentColors[index]=state.Color;card.Status.Text="Aplicado";RecordApplied(index,state,0,effectSpeed.Value,effectOptions[0],pendingBar);successes++;
+    }catch(Exception ex){card.Status.Text="Falhou";errors.Add(state.Name+": "+ex.Message);}
+   }).ToArray();
+   await Task.WhenAll(sends);applySucceeded=errors.Count==0;applyError=string.Join(" | ",errors.ToArray());
+   status.Text=applySucceeded?"Aplicado com sucesso em "+successes+" dispositivo(s). Confira os LEDs.":successes+" aplicado(s); "+applyError;
+  }finally{SetBusy(false);}
  }
  void SendStaticFrame(int index,Color c,int brightness){SendBalancedStaticFrame(index,c,brightness,Calibration.Values[index]);} void SendBalancedStaticFrame(int index,Color c,int brightness,ColorBalance balance){c=balance.Apply(c);int level=(brightness+2)/5;switch(index){case 0:Hid.Apply(c,level);break;case 1:Hid.ApplyMsi(c,(brightness+5)/10);break;case 2:VisionGpu.Apply(c,(brightness*99+50)/100);break;case 3:RamBridge.Apply(c,level);break;}}
   void RefreshProfiles(){profileList.Items.Clear();foreach(var p in profiles)profileList.Items.Add((p.Favorite?"★ ":"")+p.Name);if(profileEmpty!=null){profileEmpty.Visible=profiles.Count==0;profileList.Visible=profiles.Count>0;}if(profileCount!=null)profileCount.Text=profiles.Count==0?"0 salvos":profiles.Count+" salvos";RefreshQuickProfiles();}
