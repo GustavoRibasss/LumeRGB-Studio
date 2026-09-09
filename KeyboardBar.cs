@@ -24,7 +24,7 @@ static partial class Hid {
  }
  public static byte[] BarPacket(Color color,int brightness){var settings=BarSettings;return settings.Mode<0?FollowBarPacket(color,brightness):NativeBarPacket(settings);}
 }
-partial class LumeStudio {
+partial class ThebestRGB {
  Action<KeyboardBarSettings,Color,int> barWriter=null;
  Button keyboardBarButton;
  string BarSettingsFile {get{return Path.Combine(Path.GetDirectoryName(ProfileStore.FileName),"keyboard-bar.json");}}
@@ -52,16 +52,16 @@ class KeyboardBarForm:Form {
   Controls.Add(new Label{Text="Barra LED do teclado",Font=new Font("Segoe UI",20,FontStyle.Bold),AutoSize=true,Location=new Point(22,18)});
   Controls.Add(new Label{Text="Modo da barra",AutoSize=true,Location=new Point(24,78)});
   var mode=new ComboBox{DropDownStyle=ComboBoxStyle.DropDownList,BackColor=Color.FromArgb(35,36,45),ForeColor=Color.White,FlatStyle=FlatStyle.Flat};mode.Items.AddRange(ModeNames);mode.SetBounds(24,104,432,32);mode.SelectedIndex=Array.IndexOf(ModeIds,settings.Mode);Controls.Add(mode);
-  mode.Visible=false;var modeButton=LumeStudio.Button(ModeNames[mode.SelectedIndex]+"   ▾",Color.FromArgb(35,36,45));modeButton.TextAlign=ContentAlignment.MiddleLeft;modeButton.Padding=new Padding(12,0,0,0);modeButton.SetBounds(24,104,432,32);Controls.Add(modeButton);var menu=new ContextMenuStrip{ShowImageMargin=false,BackColor=BackColor,ForeColor=Color.White,Renderer=new StudioMenuRenderer()};for(int i=0;i<ModeNames.Length;i++){int index=i;menu.Items.Add(ModeNames[i],null,delegate{mode.SelectedIndex=index;modeButton.Text=ModeNames[index]+"   ▾";});}modeButton.Click+=delegate{menu.Show(modeButton,new Point(0,modeButton.Height));};FormClosed+=delegate{menu.Dispose();};
+  mode.Visible=false;var modeButton=ThebestRGB.Button(ModeNames[mode.SelectedIndex]+"   ▾",Color.FromArgb(35,36,45));modeButton.TextAlign=ContentAlignment.MiddleLeft;modeButton.Padding=new Padding(12,0,0,0);modeButton.SetBounds(24,104,432,32);Controls.Add(modeButton);var menu=new ContextMenuStrip{ShowImageMargin=false,BackColor=BackColor,ForeColor=Color.White,Renderer=new StudioMenuRenderer()};for(int i=0;i<ModeNames.Length;i++){int index=i;menu.Items.Add(ModeNames[i],null,delegate{mode.SelectedIndex=index;modeButton.Text=ModeNames[index]+"   ▾";});}modeButton.Click+=delegate{menu.Show(modeButton,new Point(0,modeButton.Height));};FormClosed+=delegate{menu.Dispose();};
   var multi=new StudioCheckBox{Text="Multicolorido",Checked=settings.Multicolor,ForeColor=Color.White};multi.SetBounds(24,151,180,30);Controls.Add(multi);
-  var color=LumeStudio.Button("Escolher cor",Color.FromArgb(settings.ColorValue|unchecked((int)0xff000000)));color.SetBounds(260,149,196,32);color.ForeColor=color.BackColor.GetBrightness()>.6?Color.Black:Color.White;Controls.Add(color);
+  var color=ThebestRGB.Button("Escolher cor",Color.FromArgb(settings.ColorValue|unchecked((int)0xff000000)));color.SetBounds(260,149,196,32);color.ForeColor=color.BackColor.GetBrightness()>.6?Color.Black:Color.White;Controls.Add(color);
   var brightness=new StudioSlider{Minimum=0,Maximum=4,Value=settings.Brightness,BackColor=BackColor};brightness.SetBounds(20,222,315,28);Controls.Add(brightness);
   var brightText=new Label{Text="Brilho: "+(settings.Brightness+1)+" / 5",AutoSize=true,Location=new Point(24,198)};Controls.Add(brightText);
   var speed=new StudioSlider{Minimum=0,Maximum=4,Value=settings.Speed,BackColor=BackColor};speed.SetBounds(20,282,315,28);Controls.Add(speed);
   var speedText=new Label{Text="Velocidade: "+(settings.Speed+1)+" / 5",AutoSize=true,Location=new Point(24,258)};Controls.Add(speedText);
   var result=new Label{ForeColor=Color.FromArgb(175,178,193)};result.SetBounds(24,320,432,48);Controls.Add(result);
-  var save=LumeStudio.Button("Aplicar à barra",Color.FromArgb(151,119,246));save.SetBounds(276,377,180,34);Controls.Add(save);
-  var cancel=LumeStudio.Button("Fechar",Color.FromArgb(35,36,45));cancel.SetBounds(24,377,110,34);cancel.DialogResult=DialogResult.Cancel;Controls.Add(cancel);CancelButton=cancel;
+  var save=ThebestRGB.Button("Aplicar à barra",Color.FromArgb(151,119,246));save.SetBounds(276,377,180,34);Controls.Add(save);
+  var cancel=ThebestRGB.Button("Fechar",Color.FromArgb(35,36,45));cancel.SetBounds(24,377,110,34);cancel.DialogResult=DialogResult.Cancel;Controls.Add(cancel);CancelButton=cancel;
   var preview=new BarPreviewControl{Settings=settings,Follow=Hid.LastKeyboardColor};preview.SetBounds(24,420,432,62);Controls.Add(preview);Controls.Add(new Label{Text="Prévia ilustrativa",AutoSize=true,ForeColor=Color.Silver,Location=new Point(24,489)});var timer=new System.Windows.Forms.Timer{Interval=40};timer.Tick+=delegate{preview.Invalidate();};timer.Start();FormClosed+=delegate{timer.Dispose();if(prepare!=null)prepare(settings.Copy());};Action update=delegate{preview.Settings=settings;bool active=settings.Mode>0;multi.Enabled=active;color.Enabled=active&&!multi.Checked;brightness.Enabled=active;speed.Enabled=active&&settings.Mode!=3;};
   mode.SelectedIndexChanged+=delegate{settings.Mode=ModeIds[mode.SelectedIndex];update();};multi.CheckedChanged+=delegate{settings.Multicolor=multi.Checked;update();};
   color.Click+=delegate{using(var picker=new SavedColorDialog{Color=color.BackColor,FullOpen=true})if(picker.ShowDialog(this)==DialogResult.OK){settings.ColorValue=picker.Color.ToArgb()&0xffffff;color.BackColor=picker.Color;color.ForeColor=picker.Color.GetBrightness()>.6?Color.Black:Color.White;}};

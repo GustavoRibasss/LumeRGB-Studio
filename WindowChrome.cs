@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 // Compact dark window chrome keeps the studio consistent with its dark UI even
 // when the Windows desktop is using a light theme.
-partial class LumeStudio {
+partial class ThebestRGB {
  Panel windowChrome;Label windowTitle;Button windowMinimize,windowMaximize,windowClose;
  const int WmNcHitTest=0x84,HitLeft=10,HitRight=11,HitTop=12,HitTopLeft=13,HitTopRight=14,HitBottom=15,HitBottomLeft=16,HitBottomRight=17;
  void InitializeWindowChrome(){

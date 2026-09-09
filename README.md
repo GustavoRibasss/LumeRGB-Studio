@@ -42,7 +42,7 @@ Ao aplicar, o aplicativo salva a configuração para tentar restaurá-la na pró
 
 Abrir com o Windows exige registrar a inicialização no computador. Copiar o executável para outra máquina não configura isso automaticamente. O aplicativo não garante iluminação antes do login nem gravação na memória interna dos dispositivos.
 
-Perfis, paleta, última configuração e calibração ficam em `%LOCALAPPDATA%\LumeRGB`. A pasta mantém o nome antigo para preservar os dados existentes.
+Perfis, paleta, última configuração e calibração ficam em `%LOCALAPPDATA%\ThebestRGB`. Na primeira abertura, os dados da versão antiga são copiados para a nova pasta, sem apagar os originais.
 
 A consulta automática ao GitHub avisa sobre versões publicadas; não instala atualizações. Um commit novo na branch principal não equivale a uma nova versão publicada.
 

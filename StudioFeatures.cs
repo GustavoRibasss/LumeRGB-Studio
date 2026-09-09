@@ -15,7 +15,7 @@ class SetupSnapshot {
  public KeyboardBarSettings Bar;public LightState[] Devices;public EffectOptions[] Options;public MsiZoneSettings MsiZones;public int Mode,Speed;public int Global,Master;public string Profile;
  public string Key(){return new JavaScriptSerializer().Serialize(this);}
 }
-partial class LumeStudio {
+partial class ThebestRGB {
  Button verifyDevices,presetButton,undoSetup;Label[] connectionLabels=new Label[4];
  NotifyIcon tray;ContextMenuStrip trayMenu;ToolStripMenuItem closeToTrayItem,profileMenu;bool exitRequested,closeToTray,editorOpen;
  Stack<SetupSnapshot> undoStates=new Stack<SetupSnapshot>();SetupSnapshot lastSetup;bool restoringSetup;DateTime lastEdit=DateTime.MinValue;

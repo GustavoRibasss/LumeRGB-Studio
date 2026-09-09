@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-partial class LumeStudio {
+partial class ThebestRGB {
  Label deviceHeading,selectionSummary,colorInfo,profileEmpty,profileCount,profileFormTitle,profileNameLabel,profileDescriptionLabel,profileNote;Button selectAll;Panel footer;ToolTip help;SetupStage stage;Button modePicker;ContextMenuStrip modes;Panel profileListFrame,profileNameFrame,profileDescriptionFrame;
  Color surface=Color.FromArgb(20,21,27);
  [DllImport("dwmapi.dll",EntryPoint="DwmSetWindowAttribute")]

@@ -13,7 +13,7 @@ class ScreenBrightnessSwitch:CheckBox {
   if(Focused)ControlPaint.DrawFocusRectangle(g,ClientRectangle);
  }
 }
-partial class LumeStudio {
+partial class ThebestRGB {
  ScreenBrightnessSwitch screenBrightness;bool refreshingScreenBrightness;
  void LayoutScreenControls(){if(screenBrightness==null)return;screenBrightness.Visible=effectMode.SelectedIndex==18;if(!screenBrightness.Visible)return;screenBrightness.SetBounds(all.Left,effectSpeed.Bottom+12,all.Width,38);all.Top=screenBrightness.Bottom+16;effectStop.Top=all.Bottom+9;}
  void InitializeScreenControls(){

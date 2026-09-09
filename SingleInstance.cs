@@ -5,10 +5,10 @@ using System.Security.Principal;
 using System.Threading;
 using System.Windows.Forms;
 
-partial class LumeStudio {
+partial class ThebestRGB {
  // One instance per Windows user/session, regardless of the executable's filename or folder.
  static int RunSingleApp(string[] args){
-  string scope=@"Local\LumeRGB.Studio."+WindowsIdentity.GetCurrent().User.Value;
+  string scope=BrandMigration.InstanceScope+WindowsIdentity.GetCurrent().User.Value;
   using(var gate=new Mutex(false,scope+".Instance"))
   using(var wake=new EventWaitHandle(false,EventResetMode.AutoReset,scope+".Show")){
    bool owns=false;
@@ -18,7 +18,7 @@ partial class LumeStudio {
      if(!args.Any(a=>string.Equals(a,"--tray",StringComparison.OrdinalIgnoreCase)))wake.Set();
      return 0;
     }
-    using(var app=new LumeStudio()){
+    using(var app=new ThebestRGB()){
      app.Shown+=async delegate{await app.ApplyLastConfigurationOnStartup();};
      bool trayStart=args.Any(a=>string.Equals(a,"--tray",StringComparison.OrdinalIgnoreCase));
      if(trayStart)app.Shown+=delegate{app.Hide();};

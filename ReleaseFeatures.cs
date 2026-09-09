@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Web.Script.Serialization;
 using System.Windows.Forms;
 
-partial class LumeStudio {
+partial class ThebestRGB {
  bool checkingUpdate;
  void InitializeReleaseFeatures(){
   profileList.ItemHeight=U(66);

@@ -20,7 +20,7 @@ class SlimScrollBar:Control {
  protected override void OnMouseUp(MouseEventArgs e){dragging=false;Capture=false;Invalidate();base.OnMouseUp(e);}
  void ScrollTo(int y){int travel=Math.Max(1,Height-ThumbHeight);int value=Math.Max(0,Math.Min(travel,y-grab));if(MoveTo!=null)MoveTo(value*Math.Max(0,ContentHeight-Viewport)/travel);}
 }
-partial class LumeStudio {
+partial class ThebestRGB {
  SlimScrollBar slimScroll;
  void InitializeScrollBar(){slimScroll=new SlimScrollBar{BackColor=main.BackColor};Controls.Add(slimScroll);slimScroll.MoveTo=delegate(int offset){main.AutoScrollPosition=new Point(0,offset);UpdateScrollBar();};Shown+=delegate{UpdateScrollBar();};main.SizeChanged+=delegate{if(IsHandleCreated)BeginInvoke(new Action(UpdateScrollBar));};main.Scroll+=delegate{UpdateScrollBar();};main.MouseWheel+=delegate{BeginInvoke(new Action(UpdateScrollBar));};}
  void UpdateScrollBar(){if(slimScroll==null)return;slimScroll.ContentHeight=main.AutoScrollMinSize.Height;slimScroll.Viewport=main.ClientSize.Height;slimScroll.Offset=-main.AutoScrollPosition.Y;slimScroll.SetBounds(main.Right-U(12),main.Top+U(26),U(10),Math.Max(40,main.Height-U(30)));slimScroll.Visible=slimScroll.ContentHeight>slimScroll.Viewport;slimScroll.BringToFront();slimScroll.Invalidate();}
