@@ -5,14 +5,14 @@ using System.Linq;
 using System.Web.Script.Serialization;
 using System.Windows.Forms;
 
-class BackupLocation {public string Folder{get;set;}}
+class BackupLocation {public string Folder{get;set;}public bool WelcomeSeen{get;set;}}
 static class LocalBackup {
  static string DataFolder {get{return Path.GetDirectoryName(ProfileStore.FileName);}}
  static string SettingsFile {get{return Path.Combine(DataFolder,"backup-location.json");}}
- static string folder;static bool loaded;
+ static string folder;static bool welcomeSeen,loaded;
  static bool IsNormalInstallation {get{return string.Equals(ProfileStore.FileName,Path.Combine(BrandMigration.DataDirectory(),"profiles.json"),StringComparison.OrdinalIgnoreCase);}}
- static void Load(){if(loaded)return;loaded=true;try{if(File.Exists(SettingsFile)){var setting=new JavaScriptSerializer().Deserialize<BackupLocation>(File.ReadAllText(SettingsFile));if(setting!=null&&!string.IsNullOrWhiteSpace(setting.Folder))folder=setting.Folder;}}catch{folder=null;}}
- public static void Initialize(Form owner){Load();if(!IsNormalInstallation||!string.IsNullOrEmpty(folder))return;using(var welcome=new BackupWelcomeForm()){if(welcome.ShowDialog(owner)!=DialogResult.OK)return;folder=welcome.Folder;try{Directory.CreateDirectory(DataFolder);File.WriteAllText(SettingsFile,new JavaScriptSerializer().Serialize(new BackupLocation{Folder=folder}));}catch{folder=null;return;}BackupFiles();}}
+ static void Load(){if(loaded)return;loaded=true;try{if(File.Exists(SettingsFile)){var setting=new JavaScriptSerializer().Deserialize<BackupLocation>(File.ReadAllText(SettingsFile));if(setting!=null){welcomeSeen=setting.WelcomeSeen;if(!string.IsNullOrWhiteSpace(setting.Folder))folder=setting.Folder;}}}catch{folder=null;}}
+ public static void Initialize(Form owner){Load();if(!IsNormalInstallation||welcomeSeen||!string.IsNullOrEmpty(folder))return;using(var welcome=new BackupWelcomeForm()){var choice=welcome.ShowDialog(owner);welcomeSeen=true;folder=choice==DialogResult.OK?welcome.Folder:null;try{Directory.CreateDirectory(DataFolder);File.WriteAllText(SettingsFile,new JavaScriptSerializer().Serialize(new BackupLocation{Folder=folder,WelcomeSeen=true}));}catch{folder=null;return;}if(!string.IsNullOrEmpty(folder))BackupFiles();}}
  public static void BackupFiles(){Load();if(string.IsNullOrEmpty(folder))return;try{string target=Path.Combine(folder,"ThebestRGB Backup");Directory.CreateDirectory(target);foreach(string source in Directory.GetFiles(DataFolder,"*.*").Where(f=>{string x=Path.GetExtension(f);return x==".json"||x==".txt";}).Where(f=>!string.Equals(f,SettingsFile,StringComparison.OrdinalIgnoreCase)))File.Copy(source,Path.Combine(target,Path.GetFileName(source)),true);}catch{}}
  public static void BackupSetup(SetupSnapshot setup){Load();if(string.IsNullOrEmpty(folder)||setup==null)return;try{string target=Path.Combine(folder,"ThebestRGB Backup");Directory.CreateDirectory(target);File.WriteAllText(Path.Combine(target,"configuracao-atual.json"),new JavaScriptSerializer().Serialize(setup));BackupFiles();}catch{}}
 }
