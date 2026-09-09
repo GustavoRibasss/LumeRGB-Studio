@@ -3,6 +3,7 @@ using System;
 using System.Drawing;
 using System.Linq;
 public class EffectOptions {
+ public bool FollowScreenBrightness{get;set;}
  public int Foreground{get;set;} public int Grid{get;set;} public int Background{get;set;}
  public int Saturation{get;set;} public int Intensity{get;set;} public bool CustomPalette{get;set;}
  public int SparkSpeed{get;set;} public int GridSpeed{get;set;} public int Width{get;set;} public int Dissipation{get;set;} public int Density{get;set;} public int Spread{get;set;} public bool Reverse{get;set;}

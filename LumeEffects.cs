@@ -86,7 +86,7 @@ partial class LumeStudio {
   var started=effectStarted;var options=(overrideOptions??effectOptions[mode]).Copy();var bar=Hid.BarSettings.Copy();var balances=(overrideBalances??Calibration.Values).Select(v=>v.Copy()).ToArray();var clock=System.Diagnostics.Stopwatch.StartNew();
   var counts=new int[states.Length];activeEffectIndices=indices.ToArray();foreach(int index in indices)effectSentCounts[index]=0;
   using(var timing=new FrameTiming())
-  using(var screenCapture=mode==18?ScreenColors.Start(speed):null)
+  using(var screenCapture=mode==18?ScreenColors.Start(speed,options.FollowScreenBrightness):null)
   using(var linked=CancellationTokenSource.CreateLinkedTokenSource(token))
   using(var preview=new System.Windows.Forms.Timer{Interval=33}){
    preview.Tick+=delegate{

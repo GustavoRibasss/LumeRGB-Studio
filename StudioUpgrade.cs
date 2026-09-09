@@ -9,9 +9,10 @@ using System.Web.Script.Serialization;
 using System.Windows.Forms;
 
 public class ColorBalance {
+ public bool CalibratedRed;
  public int R=100,G=100,B=100;
  public bool Valid(){return R>=0&&R<=100&&G>=0&&G<=100&&B>=0&&B<=100;}
- public Color Apply(Color c){return Color.FromArgb(c.R*R/100,c.G*G/100,c.B*B/100);}
+ public Color Apply(Color c){if(CalibratedRed)c=RedCalibration.Apply(c);return Color.FromArgb(c.R*R/100,c.G*G/100,c.B*B/100);}
  public ColorBalance Copy(){return (ColorBalance)MemberwiseClone();}
 }
 static class Calibration {

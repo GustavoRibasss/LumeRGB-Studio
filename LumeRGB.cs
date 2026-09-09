@@ -151,7 +151,7 @@ static partial class Hid {
   if(brightness<0 || brightness>20)throw new ArgumentOutOfRangeException("brightness");
   // Scale the static edge color: this firmware does not visibly honor its brightness field.
   Color dimmed=Color.FromArgb((color.R*brightness+10)/20,(color.G*brightness+10)/20,(color.B*brightness+10)/20);
-  byte[] p=Packet(dimmed,brightness==0?0:20);p[2]=6;p[3]=0;p[7]=(byte)(brightness==0?0:1);
+  byte[] p=Packet(dimmed,brightness==0?0:20);p[2]=6;p[3]=0;p[7]=(byte)(brightness==0?0:3);
   int sum=0;for(int i=0;i<63;i++)sum+=p[i];p[63]=(byte)(255-(sum&255));return p;
  }
  public static void ApplyBar(Color color,int brightness) {lock(KeyboardIoLock){ApplyBarLocked(color,brightness);}} static void ApplyBarLocked(Color color,int brightness) {

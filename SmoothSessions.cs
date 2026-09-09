@@ -16,12 +16,18 @@ static class ColorStreams {
 static partial class Hid {
  public sealed class KeyboardStream:IColorStream {
   SafeFileHandle handle;byte[] lastBar;
+  double smoothR,smoothG,smoothB;readonly System.Diagnostics.Stopwatch transitionClock=System.Diagnostics.Stopwatch.StartNew();double previousFrame;
   public KeyboardStream(){
    var devices=Find();if(devices.Count!=1)throw new IOException("Interface RGB do Hero 68 indisponível.");
    handle=CreateFile(devices[0].path,0xC0000000,3,IntPtr.Zero,3,0x40000000,IntPtr.Zero);
    if(handle.IsInvalid){handle.Dispose();throw new IOException("Não foi possível abrir o teclado.");}
+   smoothR=LastKeyboardColor.R;smoothG=LastKeyboardColor.G;smoothB=LastKeyboardColor.B;
   }
   public void SendFrame(Color color,int brightness){
+   double now=transitionClock.Elapsed.TotalSeconds,elapsed=Math.Max(0,Math.Min(.05,now-previousFrame));previousFrame=now;
+   double blend=1-Math.Exp(-elapsed/.45);
+   smoothR+=(color.R-smoothR)*blend;smoothG+=(color.G-smoothG)*blend;smoothB+=(color.B-smoothB)*blend;
+   color=Color.FromArgb((int)Math.Round(smoothR),(int)Math.Round(smoothG),(int)Math.Round(smoothB));
    int level=(brightness+2)/5;lock(KeyboardIoLock){LastKeyboardColor=color;LastKeyboardBrightness=level;
    Send(handle,Packet(color,level));Thread.Sleep(5);
    byte[] bar=BarPacket(color,level);if(lastBar==null||!System.Linq.Enumerable.SequenceEqual(lastBar,bar)){Send(handle,bar);lastBar=bar;}}
