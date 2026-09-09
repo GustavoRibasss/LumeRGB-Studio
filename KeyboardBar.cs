@@ -39,7 +39,7 @@ partial class ThebestRGB {
   SetBusy(true);var previous=Hid.BarSettings;try{
    var keyboard=cards[0].State.Copy();
    await Task.Run(()=>{lock(Hid.KeyboardIoLock){var oldBalance=Hid.ActiveBarBalance;Hid.ActiveBarBalance=Calibration.Values[0].Copy();Hid.BarSettings=settings.Copy();try{if(barWriter!=null)barWriter(settings,Hid.LastKeyboardColor,Hid.LastKeyboardBrightness);else Hid.ApplyBar(Hid.LastKeyboardColor,Hid.LastKeyboardBrightness);}catch{Hid.BarSettings=previous;Hid.ActiveBarBalance=oldBalance;throw;}}});pendingBar=settings.Copy();if(appliedDevices[0]!=null)appliedDevices[0].Bar=settings.Copy();
-   try{Directory.CreateDirectory(Path.GetDirectoryName(BarSettingsFile));File.WriteAllText(BarSettingsFile,new JavaScriptSerializer().Serialize(settings));}catch(Exception ex){status.Text="Barra aplicada, mas não foi possível salvar: "+ex.Message;return status.Text;}
+   try{Directory.CreateDirectory(Path.GetDirectoryName(BarSettingsFile));File.WriteAllText(BarSettingsFile,new JavaScriptSerializer().Serialize(settings));LocalBackup.BackupFiles();}catch(Exception ex){status.Text="Barra aplicada, mas não foi possível salvar: "+ex.Message;return status.Text;}
    SaveLastConfiguration();status.Text="Configuração enviada à barra LED do teclado.";return null;
   }catch(Exception ex){Hid.BarSettings=previous;return "Não foi possível aplicar à barra: "+ex.Message;}finally{SetBusy(false);}
  }

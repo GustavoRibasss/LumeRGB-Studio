@@ -17,7 +17,7 @@ partial class ThebestRGB {
    Directory.CreateDirectory(Path.GetDirectoryName(LastConfigurationFile));
    string temp=LastConfigurationFile+".tmp";
    File.WriteAllText(temp,new JavaScriptSerializer().Serialize(CaptureSetup()));
-   if(File.Exists(LastConfigurationFile))File.Replace(temp,LastConfigurationFile,null);else File.Move(temp,LastConfigurationFile);
+   if(File.Exists(LastConfigurationFile))File.Replace(temp,LastConfigurationFile,null);else File.Move(temp,LastConfigurationFile);LocalBackup.BackupFiles();
   } catch(Exception ex){status.Text="Não foi possível salvar a configuração de início: "+ex.Message;}
  }
  async Task ApplyLastConfigurationOnStartup(){
