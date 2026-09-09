@@ -6,4 +6,4 @@ O executável inclui componentes do OpenRGB Release Candidate 1.0rc3.1 para forn
 - Licença: GNU General Public License v2.0
 - Código-fonte: https://github.com/CalcProgrammer1/OpenRGB/tree/release_candidate_1.0rc3
 
-O backend é iniciado sob demanda e encerrado pelo Windows quando o processo termina. A detecção do Lume consulta apenas o servidor e não envia cores.
+O ThebestRGB inicia o OpenRGB quando precisa acessar os dispositivos compatíveis, inclusive durante a inicialização automática. A descoberta consulta o servidor sem enviar cores; a aplicação da iluminação é uma operação separada.
