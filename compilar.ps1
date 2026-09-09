@@ -1,7 +1,7 @@
 $ErrorActionPreference = 'Stop'
 $compiler = Join-Path $env:WINDIR 'Microsoft.NET/Framework64/v4.0.30319/csc.exe'
 $sources = Get-ChildItem -LiteralPath $PSScriptRoot -Filter '*.cs' | Select-Object -ExpandProperty FullName
-$resourceArgs = @()
+$resourceArgs = @("/resource:$PSScriptRoot/LumeStudio.ico,ThebestRGB.ico")
 $bundle = Join-Path $PSScriptRoot 'openrgb-bundle'
 if (Test-Path -LiteralPath $bundle) {
   Get-ChildItem -LiteralPath $bundle -Recurse -File | ForEach-Object {

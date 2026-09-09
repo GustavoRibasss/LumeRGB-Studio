@@ -23,7 +23,7 @@ partial class LumeStudio {
  async Task ApplyLastConfigurationOnStartup(){
   int revision=applyRevision;
   StartupLog("Inicialização iniciada");
-  await Task.Delay(8000);
+  var ramReady=Task.Run(()=>{try{RamBridge.Start();}catch(Exception ex){StartupLog("Acesso à RAM: "+ex.Message);}});
   for(int wait=0;wait<60&&(busy||editorOpen);wait++)await Task.Delay(1000);
   if(IsDisposed||busy||editorOpen||revision!=applyRevision||!File.Exists(LastConfigurationFile)){StartupLog("Restauração adiada ou sem arquivo salvo");return;}
   try{
@@ -40,9 +40,9 @@ partial class LumeStudio {
    catch(Exception ex){status.Text="Falha ao iniciar iluminação: "+ex.Message;}
    finally{startupApplying=false;}
    StartupLog("Tentativa "+(attempt+1)+": "+status.Text);
-   if(applySucceeded)return;
+   if(applySucceeded){if(effectTask.IsCompleted)await VerifyDevices();return;}
    revision=applyRevision;
-   await Task.Delay(10000);
+   if(attempt==0)await ramReady;else await Task.Delay(1500);
    if(IsDisposed||revision!=applyRevision)return;
   }
  }

@@ -2,7 +2,7 @@
 using System;
 using System.Drawing;
 public static class EffectLibrary {
- public static readonly string[] Names={"Cor fixa","Arco-íris","Respiração","Ciclo de cores","Onda pelo setup","Passagem de luz","Aurora","Oceano","Fogo","Pôr do sol","Neon","Pastel","Batimento","Vela","Respiração alternada","Duas cores","Elétrica","Áudio"};
+ public static readonly string[] Names={"Cor fixa","Arco-íris","Respiração","Ciclo de cores","Onda pelo setup","Passagem de luz","Aurora","Oceano","Fogo","Pôr do sol","Neon","Pastel","Batimento","Vela","Respiração alternada","Duas cores","Elétrica","Áudio","Cores da tela"};
  public static readonly string[] Descriptions={
  "Mantém a cor escolhida em cada dispositivo.",
  "Percorre o espectro de cores em todo o setup.",
@@ -21,7 +21,8 @@ public static class EffectLibrary {
  "Os dispositivos respiram em momentos diferentes.",
  "Alterna suavemente a cor escolhida e sua complementar.",
  "Base azul-petróleo com pulsos ciano percorrendo os dispositivos; adaptação sem reação às teclas.",
- "A intensidade acompanha o áudio de saída do Windows."
+ "A intensidade acompanha o áudio de saída do Windows.",
+ "Acompanha a cor média do monitor principal. Velocidade ajusta a suavidade da transição."
  };
  static double Wave(double x){return .5+.5*Math.Sin(x*2*Math.PI);}
  static Color Mix(Color a,Color b,double t){t=Math.Max(0,Math.Min(1,t));return Color.FromArgb((int)Math.Round(a.R+(b.R-a.R)*t),(int)Math.Round(a.G+(b.G-a.G)*t),(int)Math.Round(a.B+(b.B-a.B)*t));}
@@ -32,6 +33,7 @@ public static class EffectLibrary {
   if(mode<0||mode>=Names.Length)throw new ArgumentOutOfRangeException("mode");
   if(device<0||device>3)throw new ArgumentOutOfRangeException("device");
   if(mode<4)return EffectColors.Sample(mode,basis,seconds,speed);
+  if(mode==18)return ScreenColors.Current;
   if(mode==17){double level=.15+.85*AudioMeter.GetPeak();return Dim(basis,level);}
   double period=40-6*Math.Max(1,Math.Min(5,speed));
   double t=seconds/period,p=t-Math.Floor(t),offset=device*.25;
