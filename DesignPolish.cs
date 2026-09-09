@@ -4,7 +4,7 @@ using System.Linq;
 using System.Windows.Forms;
 
 partial class ThebestRGB {
- internal const string ReleaseVersion="22.6.4";
+ internal const string ReleaseVersion="22.6.5";
  bool designReady,designLayout;
  Button newProfile,editProfile;
  void InitializeDesign(){

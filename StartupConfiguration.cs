@@ -30,7 +30,7 @@ partial class ThebestRGB {
    startupRestorePath=LastConfigurationFile;
    ReadRestorePoint();
    RestoreSavedSetup();
-   if(!status.Text.StartsWith("Estado programado restaurado"))throw new IOException(status.Text);
+   if(!status.Text.StartsWith("Setup salvo recuperado"))throw new IOException(status.Text);
   }catch(Exception ex){status.Text="Configuração de início inválida: "+ex.Message;StartupLog(status.Text);return;}
   finally{startupRestorePath=null;}
   for(int attempt=0;attempt<3;attempt++){

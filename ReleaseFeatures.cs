@@ -26,9 +26,9 @@ partial class ThebestRGB {
  async Task RestoreAndApply(){
   if(busy)return;
   if(!File.Exists(RestorePointFile)){status.Text="Prepare seu setup e use Ferramentas > Salvar setup atual como restauração.";return;}
-  try{ReadRestorePoint();}catch(Exception ex){status.Text="Estado salvo inválido: "+ex.Message;return;}
+  try{ReadRestorePoint();}catch(Exception ex){status.Text="Não foi possível abrir o setup salvo: "+ex.Message;return;}
   RestoreSavedSetup();
-  if(!status.Text.StartsWith("Estado programado restaurado"))return;
+  if(!status.Text.StartsWith("Setup salvo recuperado"))return;
   await ApplyCards(cards.Where(c=>c.State.Included).ToList());
  }
  SetupSnapshot ReadRestorePoint(){

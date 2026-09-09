@@ -28,7 +28,7 @@ class StudioButton:Button {
 }
 class SetupStage:Panel {
  public SetupStage(){SetStyle(ControlStyles.ResizeRedraw,true);DoubleBuffered=true;BackColor=Color.FromArgb(15,16,21);}
- protected override void OnPaint(PaintEventArgs e){base.OnPaint(e);var g=e.Graphics;g.SmoothingMode=SmoothingMode.AntiAlias;using(var pen=new Pen(Color.FromArgb(34,36,46)))g.DrawRectangle(pen,0,0,Width-1,Height-1);using(var font=new Font("Segoe UI",8))using(var b=new SolidBrush(Color.FromArgb(137,139,155)))g.DrawString("PRÉVIA DO SETUP",font,b,18,15);using(var font=new Font("Segoe UI",8))using(var b=new SolidBrush(Color.FromArgb(100,104,122)))g.DrawString("Prévia por zona • confira o resultado nos LEDs",font,b,18,Height-26);}
+ protected override void OnPaint(PaintEventArgs e){base.OnPaint(e);var g=e.Graphics;g.SmoothingMode=SmoothingMode.AntiAlias;using(var pen=new Pen(Color.FromArgb(34,36,46)))g.DrawRectangle(pen,0,0,Width-1,Height-1);using(var font=new Font("Segoe UI",8))using(var b=new SolidBrush(Color.FromArgb(137,139,155)))g.DrawString("PRÉVIA DO SETUP",font,b,18,15);using(var font=new Font("Segoe UI",8))using(var b=new SolidBrush(Color.FromArgb(100,104,122)))g.DrawString("Prévia da iluminação • confira nos LEDs",font,b,18,Height-26);}
 }
 
 // Keeps the native CheckBox interaction and accessibility, with Studio rendering.
