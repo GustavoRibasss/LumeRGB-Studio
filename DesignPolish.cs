@@ -9,7 +9,9 @@ partial class ThebestRGB {
  Button newProfile,editProfile;
  void InitializeDesign(){
   Text="ThebestRGB · "+ReleaseVersion;windowTitle.Text="";Muted=Color.FromArgb(168,174,192);
-  MinimumSize=new Size(880,600);
+  // The studio needs room for the setup preview and the customization panel.
+  // Keep the first window wide enough to avoid a broken-looking narrow layout.
+  MinimumSize=new Size(1180,720);
   foreach(var c in new Control[]{profileFormTitle,profileNameLabel,profileNameFrame,profileDescriptionLabel,profileDescriptionFrame,profileNote})c.Visible=false;
   foreach(Control c in side.Controls)if(c is Label&&c.Text.StartsWith("S T U D I O"))c.Text="STUDIO / "+ReleaseVersion;
   newProfile=Button("+  Novo perfil",surface);side.Controls.Add(newProfile);newProfile.Click+=delegate{EditProfileDetails(true);};
@@ -32,7 +34,7 @@ partial class ThebestRGB {
   selectAll.SetBounds(pad+left-U(146),y+stageH+U(12),U(146),U(32));compareButton.SetBounds(pad+left-U(258),y+stageH+U(12),U(102),U(32));
   int cardY=y+stageH+U(56),cw=(left-gap*(cols-1))/cols,ch=U(150);
   for(int i=0;i<4;i++){var card=cards[i];card.SetBounds(pad+i%cols*(cw+gap),cardY+i/cols*(ch+gap),cw,ch);LayoutDesignCard(card,i);int aw=left/2;card.Art.SetBounds(i%2*aw+U(8),U(28)+i/2*((stageH-U(quickProfiles.Visible?60:32))/2),aw-U(16),(stageH-U(quickProfiles.Visible?60:32))/2);}
-  int bottom=cardY+(4/cols)*(ch+gap);hero.SetBounds(narrow?pad:pad+left+gap,narrow?bottom:U(128),U(280),U(534));
+  int bottom=cardY+(4/cols)*(ch+gap);hero.SetBounds(narrow?pad:pad+left+gap,narrow?bottom:U(128),narrow?left:U(280),U(534));
   int contentBottom=narrow?bottom+hero.Height+pad:Math.Max(bottom-gap,hero.Bottom)+U(4);main.AutoScroll=true;main.AutoScrollMinSize=new Size(0,contentBottom);shortcutHint.Visible=false;
   profileListFrame.SetBounds(U(16),U(224),U(148),Math.Max(U(70),side.ClientSize.Height-U(470)));profileList.SetBounds(1,1,profileListFrame.Width-2,profileListFrame.Height-2);profileEmpty.SetBounds(U(10),U(20),U(128),U(90));int sy=profileListFrame.Bottom+U(12);
   newProfile.SetBounds(U(16),sy,U(148),U(34));editProfile.SetBounds(U(16),sy+U(42),U(148),U(32));save.SetBounds(U(16),sy+U(82),U(148),U(34));save.Text="Salvar setup";load.SetBounds(U(16),sy+U(124),U(72),U(32));remove.SetBounds(U(94),sy+U(124),U(70),U(32));diagnostic.Visible=false;

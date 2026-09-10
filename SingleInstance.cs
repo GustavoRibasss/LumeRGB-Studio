@@ -15,7 +15,7 @@ partial class ThebestRGB {
    try{
     try{owns=gate.WaitOne(0);}catch(AbandonedMutexException){owns=true;}
     if(!owns){
-     if(!args.Any(a=>string.Equals(a,"--tray",StringComparison.OrdinalIgnoreCase)))wake.Set();
+     wake.Set();
      return 0;
     }
     using(var app=new ThebestRGB()){
