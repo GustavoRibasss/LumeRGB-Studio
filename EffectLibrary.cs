@@ -34,7 +34,7 @@ public static class EffectLibrary {
   if(mode<0||mode>=Names.Length)throw new ArgumentOutOfRangeException("mode");
   if(device<0||device>3)throw new ArgumentOutOfRangeException("device");
   if(mode==3)mode=1; // Compatibilidade com perfis antigos de Ciclo de cores.
-  if(mode<4)return EffectColors.Sample(mode,basis,seconds,speed);
+if(mode<4){if(mode==1)seconds+=(40-6*Math.Max(1,Math.Min(5,speed)))*device/4.0;return EffectColors.Sample(mode,basis,seconds,speed);}
   if(mode==18)return ScreenColors.ForDevice(device);
   if(mode==17){double level=.15+.85*AudioMeter.GetPeak();return Dim(basis,level);}
   double period=40-6*Math.Max(1,Math.Min(5,speed));
