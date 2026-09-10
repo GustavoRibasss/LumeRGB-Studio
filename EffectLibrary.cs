@@ -2,13 +2,13 @@
 using System;
 using System.Drawing;
 public static class EffectLibrary {
- public static bool IsMainEffect(int mode){return mode==0||mode==1||mode==2||mode==4||mode==16||mode==17||mode==18;}
- public static readonly string[] Names={"Cor fixa","Arco-íris","Respiração","Arco-íris","Onda pelo setup","Passagem de luz","Aurora","Oceano","Fogo","Pôr do sol","Neon","Pastel","Batimento","Vela","Respiração alternada","Duas cores","Elétrica","Áudio","Ambilight"};
+ public static bool IsMainEffect(int mode){return mode==0||mode==1||mode==2||mode==3||mode==4||mode==16||mode==17||mode==18;}
+ public static readonly string[] Names={"Cor fixa","Arco-íris","Respiração","Rainbow","Onda pelo setup","Passagem de luz","Aurora","Oceano","Fogo","Pôr do sol","Neon","Pastel","Batimento","Vela","Respiração alternada","Duas cores","Elétrica","Áudio","Ambilight"};
  public static readonly string[] Descriptions={
  "Mantém a cor escolhida em cada dispositivo.",
  "Percorre o espectro de cores em todo o setup.",
  "Aumenta e diminui suavemente a cor escolhida.",
- "Transições suaves entre sete cores.",
+ "Mostra várias cores ao mesmo tempo, distribuídas pelo setup.",
  "O arco-íris avança entre teclado, gabinete, RTX e RAM.",
  "Uma faixa de luz percorre os dispositivos na cor escolhida.",
  "Verde, turquesa e violeta com intensidade ondulante.",
@@ -33,8 +33,7 @@ public static class EffectLibrary {
  public static Color Sample(int mode,Color basis,double seconds,int speed,int device){
   if(mode<0||mode>=Names.Length)throw new ArgumentOutOfRangeException("mode");
   if(device<0||device>3)throw new ArgumentOutOfRangeException("device");
-  if(mode==3)mode=1; // Compatibilidade com perfis antigos de Ciclo de cores.
-if(mode<4){if(mode==1)seconds+=(40-6*Math.Max(1,Math.Min(5,speed)))*device/4.0;return EffectColors.Sample(mode,basis,seconds,speed);}
+if(mode<4){if(mode==3)seconds+=(40-6*Math.Max(1,Math.Min(5,speed)))*device/4.0;return EffectColors.Sample(mode,basis,seconds,speed);}
   if(mode==18)return ScreenColors.ForDevice(device);
   if(mode==17){double level=.15+.85*AudioMeter.GetPeak();return Dim(basis,level);}
   double period=40-6*Math.Max(1,Math.Min(5,speed));
