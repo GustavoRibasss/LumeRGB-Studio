@@ -17,7 +17,9 @@ static class ScreenColors {
   if(hue<48)return Color.FromArgb(255,128,0);
   if(hue<72)return Color.Yellow;
   if(hue<166)return Color.Lime;
-  if(hue<211)return Color.FromArgb(0,220,255); // ice and cyan
+  // Bright blue scenes such as ocean, sky, ice and snow need a light-blue
+  // output. Keep the vivid cyan only for dark, strongly teal/neon scenes.
+  if(hue<211)return color.R>=45||color.GetBrightness()>=.42f?Color.FromArgb(102,217,255):Color.FromArgb(0,220,255);
   if(hue<271)return Color.FromArgb(0,96,255);
   return Color.FromArgb(176,96,255);
  }
