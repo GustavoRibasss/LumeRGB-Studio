@@ -123,7 +123,9 @@ void SetGlobal(Color c){global=c;pick.BackColor=global;pick.ForeColor=global.Get
      await Task.Run(()=>{
       if(effectWriter!=null){effectWriter(index,balances[i].Apply(state.Color),state.Brightness);return;}
       if(index==3){SendBalancedStaticFrame(index,state.Color,state.Brightness,balances[i]);return;}
-      for(int step=1;step<=4;step++){SendBalancedStaticFrame(index,EffectOptions.Mix(origins[i],state.Color,step/4.0),state.Brightness,balances[i]);if(step<4)Thread.Sleep(20);}
+      // Two short transition frames keep a manual colour change pleasant but
+      // no longer make automatic changes feel delayed.
+      for(int step=1;step<=2;step++){SendBalancedStaticFrame(index,EffectOptions.Mix(origins[i],state.Color,step/2.0),state.Brightness,balances[i]);if(step<2)Thread.Sleep(8);}
      });
      lastSentColors[index]=state.Color;card.Status.Text="Aplicado";RecordApplied(index,state,0,effectSpeed.Value,effectOptions[0],pendingBar);successes++;
     }catch(Exception ex){card.Status.Text="Falhou";errors.Add(state.Name+": "+ex.Message);}
