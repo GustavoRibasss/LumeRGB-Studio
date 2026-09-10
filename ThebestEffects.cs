@@ -46,7 +46,7 @@ partial class ThebestRGB {
   effectStop=Button("Parar efeito",Color.FromArgb(44,51,69));effectStop.SetBounds(550,135,150,32);hero.Controls.Add(effectStop);effectStop.Enabled=false;
   effectStop.Click+=async delegate{if(busy)return;SetBusy(true);try{await StopEffect();status.Text="Efeito parado. Os LEDs ficam na última cor enviada.";}finally{SetBusy(false);}};
   FormClosing+=async delegate(object sender,FormClosingEventArgs e){
-   if(closingAfterStop)return;if(!exitRequested&&closeToTray&&e.CloseReason==CloseReason.UserClosing&&!editorOpen){e.Cancel=true;Hide();return;}
+   if(closingAfterStop)return;if(!exitRequested&&closeToTray&&e.CloseReason==CloseReason.UserClosing&&!editorOpen){e.Cancel=true;BeginInvoke(new Action(HideToTray));return;}
    if(busy){e.Cancel=true;status.Text="Aguarde o envio terminar para fechar.";return;}
    if(!effectTask.IsCompleted){e.Cancel=true;SetBusy(true);await StopEffect();closingAfterStop=true;Close();}
   };

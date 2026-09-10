@@ -21,12 +21,12 @@ partial class ThebestRGB {
     using(var app=new ThebestRGB()){
      app.Shown+=async delegate{await app.ApplyLastConfigurationOnStartup();};
      bool trayStart=args.Any(a=>string.Equals(a,"--tray",StringComparison.OrdinalIgnoreCase));
-     if(trayStart)app.Shown+=delegate{app.Hide();};
+     if(trayStart)app.Shown+=delegate{app.HideToTray();};
      IntPtr handle=app.Handle;
      RegisteredWaitHandle listener=ThreadPool.RegisterWaitForSingleObject(wake,delegate{
       try{if(!app.IsDisposed&&app.IsHandleCreated)app.BeginInvoke(new Action(delegate{
        if(app.IsDisposed)return;
-       app.RestoreWindow();
+       app.ToggleWindowFromTaskbar();
        var dialog=app.OwnedForms.LastOrDefault(f=>f.Visible);
        if(dialog!=null)dialog.Activate();
       }));}catch(InvalidOperationException){}
