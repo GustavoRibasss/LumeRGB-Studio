@@ -19,7 +19,7 @@ partial class ThebestRGB {
  void InitializeScreenControls(){
   screenBrightness=new ScreenBrightnessSwitch{ForeColor=Color.White,BackColor=hero.BackColor,AutoSize=false};hero.Controls.Add(screenBrightness);help.SetToolTip(screenBrightness,"Ligado: acompanha o brilho da imagem. Desligado: altera apenas as cores.");
   Action refresh=delegate{refreshingScreenBrightness=true;try{screenBrightness.Visible=effectMode.SelectedIndex==18;screenBrightness.Checked=effectOptions[18].FollowScreenBrightness;}finally{refreshingScreenBrightness=false;}};
-  screenBrightness.CheckedChanged+=delegate{if(refreshingScreenBrightness)return;effectOptions[18].FollowScreenBrightness=screenBrightness.Checked;TrackSetup();status.Text="Luminosidade ajustada. Clique em Aplicar iluminação.";};
+  screenBrightness.CheckedChanged+=delegate{if(refreshingScreenBrightness)return;effectOptions[18].FollowScreenBrightness=screenBrightness.Checked;TrackSetup();if(autoApply){status.Text="Luminosidade ajustada e aplicada automaticamente.";QueueAutoApply();}else status.Text="Luminosidade ajustada. Clique em Aplicar iluminação.";};
   effectMode.SelectedIndexChanged+=delegate{refresh();LayoutScreenControls();};Activated+=delegate{refresh();LayoutScreenControls();};refresh();LayoutScreenControls();
  }
 }
