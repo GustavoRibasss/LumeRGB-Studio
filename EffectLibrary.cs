@@ -3,7 +3,7 @@ using System;
 using System.Drawing;
 public static class EffectLibrary {
  public static bool IsMainEffect(int mode){return mode==0||mode==1||mode==2||mode==4||mode==16||mode==17||mode==18;}
- public static readonly string[] Names={"Cor fixa","Arco-íris","Respiração","Arco-íris","Onda pelo setup","Passagem de luz","Aurora","Oceano","Fogo","Pôr do sol","Neon","Pastel","Batimento","Vela","Respiração alternada","Duas cores","Elétrica","Áudio","Cores da tela"};
+ public static readonly string[] Names={"Cor fixa","Arco-íris","Respiração","Arco-íris","Onda pelo setup","Passagem de luz","Aurora","Oceano","Fogo","Pôr do sol","Neon","Pastel","Batimento","Vela","Respiração alternada","Duas cores","Elétrica","Áudio","Ambilight"};
  public static readonly string[] Descriptions={
  "Mantém a cor escolhida em cada dispositivo.",
  "Percorre o espectro de cores em todo o setup.",
@@ -23,7 +23,7 @@ public static class EffectLibrary {
  "Alterna suavemente a cor escolhida e sua complementar.",
  "Base azul-petróleo com pulsos ciano percorrendo os dispositivos; adaptação sem reação às teclas.",
  "A intensidade acompanha o áudio de saída do Windows.",
- "Acompanha a cor predominante do monitor principal. Velocidade ajusta a suavidade da transição."
+ "Ambilight unificado: encontra a cor mais forte do monitor principal e aplica em todo o setup. Velocidade ajusta a suavidade."
  };
  static double Wave(double x){return .5+.5*Math.Sin(x*2*Math.PI);}
  static Color Mix(Color a,Color b,double t){t=Math.Max(0,Math.Min(1,t));return Color.FromArgb((int)Math.Round(a.R+(b.R-a.R)*t),(int)Math.Round(a.G+(b.G-a.G)*t),(int)Math.Round(a.B+(b.B-a.B)*t));}
@@ -35,7 +35,7 @@ public static class EffectLibrary {
   if(device<0||device>3)throw new ArgumentOutOfRangeException("device");
   if(mode==3)mode=1; // Compatibilidade com perfis antigos de Ciclo de cores.
   if(mode<4)return EffectColors.Sample(mode,basis,seconds,speed);
-  if(mode==18)return ScreenColors.Current;
+  if(mode==18)return ScreenColors.ForDevice(device);
   if(mode==17){double level=.15+.85*AudioMeter.GetPeak();return Dim(basis,level);}
   double period=40-6*Math.Max(1,Math.Min(5,speed));
   double t=seconds/period,p=t-Math.Floor(t),offset=device*.25;
