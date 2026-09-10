@@ -163,7 +163,7 @@ static partial class Hid {
  }
  public static void Apply(Color color,int brightness) {lock(KeyboardIoLock){ApplyKeyboardLocked(color,brightness);}} static void ApplyKeyboardLocked(Color color,int brightness) {
   var devices=Find();
-  if(devices.Count!=1) throw new IOException(devices.Count==0 ? "Não encontrei uma interface RGB compatível. Conecte o Hero 68 por USB e feche o configurador AULA." : "Encontrei mais de uma interface compatível. É necessário verificar a interface antes de enviar cores.");
+  if(devices.Count!=1) throw new IOException(devices.Count==0 ? "Teclado não encontrado. Conecte o Hero 68 por USB." : "Mais de um teclado compatível foi encontrado.");
   using(var handle=CreateFile(devices[0].path,0xC0000000,3,IntPtr.Zero,3,0x40000000,IntPtr.Zero)) {
    if(handle.IsInvalid) throw new IOException("Não foi possível abrir o teclado. Código Windows: " + Marshal.GetLastWin32Error());
    LastKeyboardColor=color;LastKeyboardBrightness=brightness;byte[] p=Packet(color,brightness);
@@ -211,7 +211,7 @@ class RgbApp:Form {
  void SetRam(int level) {try {status.Text=RamBridge.Apply(chosen,level);}catch(Exception ex) {status.Text=ex.Message;}}
  void SetCabinet(int level) {try {Hid.ApplyMsi(chosen,(level+1)/2);status.Text="Cor enviada aos três conectores ARGB. Confira as luzes do gabinete.";}catch(Exception ex) {status.Text=ex.Message;}}
  void SetGpu(int level) {try {VisionGpu.Apply(chosen,(level*99+10)/20);status.Text="Cor enviada ao logo da RTX. Confira a iluminação.";}catch(Exception ex) {status.Text=ex.Message;}}
- void Detect() {try {int n=Hid.Find().Count;status.Text=n==1 ? "Hero 68 detectado. Escolha a cor e clique em Aplicar." : "Interfaces RGB compatíveis encontradas: "+n+". Nenhum comando enviado.";} catch(Exception ex) {status.Text=ex.Message;}}
+ void Detect() {try {int n=Hid.Find().Count;status.Text=n==1 ? "Hero 68 detectado. Escolha a cor e clique em Aplicar." : n==0 ? "Teclado não encontrado. Conecte o Hero 68 por USB." : "Mais de um teclado compatível foi encontrado.";} catch(Exception ex) {status.Text=ex.Message;}}
  void SetColor(int level) {apply.Enabled=false;try {Hid.Apply(chosen,level);status.Text="Comando enviado ao teclado. Confira a mudança nos LEDs.";}catch(Exception ex) {status.Text=ex.Message;}finally {apply.Enabled=true;}}
  [STAThread] static int Main(string[] args) {
   if(args.Length>0 && args[0]=="--test-bar-white") {try {Hid.ApplyBar(Color.White,20);Console.WriteLine("Comando da barra LED enviado: branco, brilho 20.");return 0;}catch(Exception ex){Console.Error.WriteLine(ex.Message);return 1;}}
