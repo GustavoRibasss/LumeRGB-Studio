@@ -2,10 +2,6 @@ $ErrorActionPreference = 'Stop'
 $compiler = Join-Path $env:WINDIR 'Microsoft.NET/Framework64/v4.0.30319/csc.exe'
 $sources = Get-ChildItem -LiteralPath $PSScriptRoot -Filter '*.cs' | Select-Object -ExpandProperty FullName
 $resourceArgs = @("/resource:$PSScriptRoot/ThebestRGB.ico,ThebestRGB.ico")
-$tunnelRuntime = Join-Path $PSScriptRoot 'runtime\cloudflared.exe'
-if (Test-Path -LiteralPath $tunnelRuntime) {
-  $resourceArgs += "/resource:$tunnelRuntime,ThebestRGB.cloudflared.exe"
-}
 $bundle = Join-Path $PSScriptRoot 'openrgb-bundle'
 if (Test-Path -LiteralPath $bundle) {
   Get-ChildItem -LiteralPath $bundle -Recurse -File | ForEach-Object {
