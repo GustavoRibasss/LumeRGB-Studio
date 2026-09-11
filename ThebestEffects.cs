@@ -64,7 +64,7 @@ partial class ThebestRGB {
   if(busy)return;
   if(targets.Count==0){status.Text="Selecione pelo menos um dispositivo.";return;}
   SaveLastConfiguration();SetBusy(true);await StopEffect();applySucceeded=false;applyError="";SetBusy(false);
-  if(blackoutActive){blackoutActive=false;lightsOffRestore=null;}if(targets.Contains(cards[0])){Hid.BarSettings=pendingBar.Copy();Hid.ActiveBarBalance=Calibration.Values[0].Copy();}if(effectMode.SelectedIndex==0){await ApplyStaticCards(targets);return;}
+  if(blackoutActive){blackoutActive=false;lightsOffRestore=null;SaveBlackoutState(false);}if(targets.Contains(cards[0])){Hid.BarSettings=pendingBar.Copy();Hid.ActiveBarBalance=Calibration.Values[0].Copy();}if(effectMode.SelectedIndex==0){await ApplyStaticCards(targets);return;}
   int mode=effectMode.SelectedIndex,speed=effectSpeed.Value;
   var states=targets.Select(c=>c.State.Copy()).ToArray();
   var indices=targets.Select(c=>cards.IndexOf(c)).ToArray();
