@@ -10,7 +10,7 @@ partial class ThebestRGB {
   for(int i=0;i<DefaultQuickColors.Length;i++){
    int value=DefaultQuickColors[i];var button=Button("",Color.FromArgb((value>>16)&255,(value>>8)&255,value&255));
    button.SetBounds(18+i*41,251,32,20);hero.Controls.Add(button);frequentButtons.Add(button);
-   button.Click+=delegate{if(!busy)SetGlobal(button.BackColor);};
+   button.Click+=delegate{if(!busy&&!blackoutActive)SetGlobal(button.BackColor);};
    help.SetToolTip(button,names[i]+" · #"+value.ToString("X6"));
   }
  }
