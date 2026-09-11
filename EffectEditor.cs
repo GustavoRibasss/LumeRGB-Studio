@@ -53,13 +53,11 @@ partial class EffectEditor:Form {
   foreach(var p in pages){foreach(Control c in p.Controls.Cast<Control>().ToArray())c.Dispose();p.Controls.Clear();}colors.Clear();
   bool screen=mode==18,electric=mode==16,audio=mode==17;
   bool colorDriven=mode==2||mode==5||mode==12||mode==14||mode==15||audio;
-  tabs[0].Text=screen?"Tela":"Cores";tabs[1].Text=screen?"Suavidade":"Movimento";tabs[2].Text="Ajuste";
+  tabs[0].Text=screen?"Tela":"Cores";tabs[1].Text="Detalhes";tabs[2].Text="Ajuste";
   if(screen){
    TextBlock(0,"Cores da tela","O Ambilight usa a cor mais forte da cena; não usa paleta manual.");
    var follow=new StudioCheckBox{Text="Acompanhar luminosidade da tela",Checked=Result.FollowScreenBrightness,ForeColor=Color.White,Width=424,Height=32};pages[0].Controls.Add(follow);follow.CheckedChanged+=delegate{Result.FollowScreenBrightness=follow.Checked;TrackEditor();};
    AddSlider(0,"Saturação da imagem","Ajusta apenas a vivacidade das cores capturadas.",0,100,Result.Saturation,v=>Result.Saturation=v,v=>v+"%");
-   TextBlock(1,"Transição entre cenas","Controla quão rápido a iluminação acompanha a imagem.");
-   AddSlider(1,"Suavidade","À esquerda reage mais devagar; à direita acompanha mais rápido.",1,5,Speed,v=>Speed=v,v=>new[]{"Muito suave","Suave","Equilibrada","Rápida","Imediata"}[v-1]);
   }else{
    if(electric){
     TextBlock(0,"Escolha a paleta","Pulsos são os flashes. A base ilumina entre eles.");
@@ -73,16 +71,12 @@ partial class EffectEditor:Form {
     AddColor("Cor secundária","Uma segunda cor para combinar com a principal.",Result.Grid,v=>Result.Grid=v);
     AddColor("Fundo","Escolha preto para apagar o fundo.",Result.Background,v=>Result.Background=v);
    }
-   if(!audio){
-    TextBlock(1,"Defina o ritmo",electric?"Comece pela velocidade. Depois ajuste o formato dos pulsos.":"A velocidade controla a duração do ciclo de animação.");
-    AddSlider(1,"Velocidade","Mais lenta à esquerda, mais rápida à direita.",1,5,Speed,v=>Speed=v,v=>new[]{"Muito lenta","Lenta","Média","Rápida","Muito rápida"}[v-1]);
-    if(electric){AddSlider(1,"Quantidade de pulsos","Número de flashes distribuídos em cada ciclo.",1,5,Result.Density,v=>Result.Density=v,v=>v==1?"1 pulso":v+" pulsos");AddSlider(1,"Largura do pulso","De flashes estreitos a faixas mais largas.",10,100,Result.Width,v=>Result.Width=v,v=>v+" / 100");AddSlider(1,"Rastro do pulso","Quanto do brilho permanece atrás de cada flash.",0,100,Result.Dissipation,v=>Result.Dissipation=v,v=>v+"%");}
-   }
+   if(electric){TextBlock(1,"Detalhes dos pulsos","A velocidade geral é ajustada na tela principal.");AddSlider(1,"Quantidade de pulsos","Número de flashes distribuídos em cada ciclo.",1,5,Result.Density,v=>Result.Density=v,v=>v==1?"1 pulso":v+" pulsos");AddSlider(1,"Largura do pulso","De flashes estreitos a faixas mais largas.",10,100,Result.Width,v=>Result.Width=v,v=>v+" / 100");AddSlider(1,"Rastro do pulso","Quanto do brilho permanece atrás de cada flash.",0,100,Result.Dissipation,v=>Result.Dissipation=v,v=>v+"%");}
    TextBlock(2,audio?"Resposta ao áudio":"Cor e acabamento",audio?"A luz acompanha o áudio de saída do Windows.":"Ajuste a vivacidade sem alterar o brilho dos dispositivos.");
    AddSlider(2,"Saturação","À esquerda, tons neutros. À direita, cores vivas.",0,100,Result.Saturation,v=>Result.Saturation=v,v=>v+"%");
    if(electric){AddSlider(2,"Ritmo dos pulsos","Ajuste relativo à velocidade da aba Movimento.",1,100,Result.SparkSpeed,v=>Result.SparkSpeed=v,v=>(v/50.0).ToString("0.00")+"×");AddSlider(2,"Ritmo da base","Velocidade da luz suave entre os flashes.",1,100,Result.GridSpeed,v=>Result.GridSpeed=v,v=>(v/50.0).ToString("0.00")+"×");AddSlider(2,"Intervalo entre dispositivos","Em 0%, os pulsos aparecem juntos. Aumente para alternar.",0,100,Result.Spread,v=>Result.Spread=v,v=>v+"%");var reverse=new StudioCheckBox{Text="Inverter o sentido dos pulsos",Checked=Result.Reverse,ForeColor=Color.White,Width=424,Height=32};pages[2].Controls.Add(reverse);reverse.CheckedChanged+=delegate{Result.Reverse=reverse.Checked;TrackEditor();};}
   }
-  if(IsHandleCreated){float factor=E(96)/96f;if(factor!=1)foreach(var page in pages)foreach(Control item in page.Controls)item.Scale(new SizeF(factor,factor));}availableTabs[0]=screen||electric||colorDriven;availableTabs[1]=!audio;availableTabs[2]=!screen;RefreshTabs();SelectTab(currentTab);Arrange();
+  if(IsHandleCreated){float factor=E(96)/96f;if(factor!=1)foreach(var page in pages)foreach(Control item in page.Controls)item.Scale(new SizeF(factor,factor));}availableTabs[0]=screen||electric||colorDriven;availableTabs[1]=electric;availableTabs[2]=!screen;RefreshTabs();SelectTab(currentTab);Arrange();
  } void TextBlock(int tab,string title,string description){var p=new Panel{Width=424,Height=50,Margin=new Padding(0,0,0,4)};p.Controls.Add(new Label{Text=title,Font=new Font("Segoe UI",11,FontStyle.Bold),Location=new Point(0,0),Size=new Size(424,24)});p.Controls.Add(new Label{Text=description,ForeColor=ThebestRGB.Muted,Location=new Point(0,26),Size=new Size(424,24)});pages[tab].Controls.Add(p);}
  void AddColor(string name,string description,int value,Action<int> change){var c=new EffectColorControl(name,description,value){Margin=new Padding(0,0,0,8)};c.Changed=delegate(int edited){change(edited);if(mode!=16&&customPaletteToggle!=null)customPaletteToggle.Checked=true;TrackEditor();};colors.Add(c);pages[0].Controls.Add(c);}
  void AddSlider(int tab,string name,string hint,int min,int max,int value,Action<int> change,Func<int,string> format){var p=new Panel{Width=424,Height=64,BackColor=Color.FromArgb(30,32,41),Margin=new Padding(0,0,0,4)};p.Controls.Add(new Label{Text=name,Location=new Point(12,4),Size=new Size(218,21),Font=new Font("Segoe UI",9,FontStyle.Bold)});var number=new Label{Text=format(value),Location=new Point(230,4),Size=new Size(100,21),TextAlign=ContentAlignment.TopRight};p.Controls.Add(number);p.Controls.Add(new Label{Text=hint,Location=new Point(12,25),Size=new Size(402,20),ForeColor=ThebestRGB.Muted,Font=new Font("Segoe UI",8)});var slider=new StudioSlider{Minimum=min,Maximum=max,Value=value,BackColor=p.BackColor,AccessibleName=name};slider.SetBounds(7,44,410,18);p.Controls.Add(slider);var input=new NumericUpDown{Minimum=min,Maximum=max,Value=value,BackColor=Color.FromArgb(40,44,57),ForeColor=Color.White,BorderStyle=BorderStyle.FixedSingle,AccessibleName=name};input.SetBounds(340,2,72,24);p.Controls.Add(input);input.ValueChanged+=delegate{slider.Value=(int)input.Value;};slider.ValueChanged+=delegate{input.Value=slider.Value;number.Text=format(slider.Value);change(slider.Value);TrackEditor();};pages[tab].Controls.Add(p);}
