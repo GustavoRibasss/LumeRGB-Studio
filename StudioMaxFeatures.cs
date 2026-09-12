@@ -15,7 +15,7 @@ partial class ThebestRGB {
  Keys saveShortcut=Keys.Control|Keys.S,undoShortcut=Keys.Control|Keys.Z,verifyShortcut=Keys.F5,stopShortcut=Keys.Escape;
  Label shortcutHint;
  void InitializeMaxFeatures(){BrandMigration.Startup();
-  resetSetup=Button("Iluminação predefinida",surface);resetSetup.Parent=main;resetSetup.Click+=async delegate{if(!busy&&!blackoutActive)await RestoreAndApply();};
+  resetSetup=Button("Iluminação predefinida",surface);resetSetup.Parent=main;resetSetup.Click+=async delegate{if(busy||blackoutActive)return;ResetSetup();await ApplyCards(cards.Where(c=>c.State.Included).ToList());};
   testSelected=new AutoApplyButton{Text="Aplicação automática",BackColor=surface,ForeColor=Color.White,Font=new Font("Segoe UI",9),FlatStyle=FlatStyle.Flat,UseVisualStyleBackColor=false,FlatAppearance={BorderSize=0}};testSelected.Parent=main;InitializeAutoApply();
   diagnostic=Button("Diagnóstico",surface);diagnostic.Parent=side;diagnostic.Click+=delegate{ExportDiagnostics();};
   shortcutHint=new Label{Text="Ctrl+S salvar  ·  Ctrl+Z desfazer  ·  F5 verificar  ·  Esc parar",ForeColor=Muted,Font=new Font("Segoe UI",8),AutoEllipsis=true};main.Controls.Add(shortcutHint);
