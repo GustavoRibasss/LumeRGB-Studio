@@ -1,0 +1,9 @@
+bin/
+obj/
+*.user
+*.suo
+*.pdb
+*.tmp
+tests/*.exe
+tests/*.png
+ThebestRGB-Studio-v22.exe
