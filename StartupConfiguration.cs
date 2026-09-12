@@ -24,32 +24,35 @@ partial class ThebestRGB {
   } catch(Exception ex){status.Text="Não foi possível salvar a configuração de início: "+ex.Message;}
  }
  async Task ApplyLastConfigurationOnStartup(){
-  int revision=applyRevision;
+ int revision=applyRevision;
   bool startBlackout=SavedBlackout;
   StartupLog("Inicialização iniciada");
   var ramReady=Task.Run(()=>{try{RamBridge.Start();}catch(Exception ex){StartupLog("Acesso à RAM: "+ex.Message);}});
   for(int wait=0;wait<60&&(busy||editorOpen);wait++)await Task.Delay(1000);
   if(IsDisposed||busy||editorOpen||revision!=applyRevision){StartupLog("Restauração adiada");return;}
   if(!File.Exists(LastConfigurationFile)){if(startBlackout){StartupLog("Estado apagado recuperado sem configuração salva");await ToggleLighting();}else StartupLog("Sem arquivo salvo");return;}
+  // During the restore, no pending automatic application may send the default
+  // UI state before the saved mode and colours have been loaded.
+  startupApplying=true;
+  if(autoApplyTimer!=null)autoApplyTimer.Stop();
   try{
    startupRestorePath=LastConfigurationFile;
    ReadRestorePoint();
    RestoreSavedSetup();
    if(!status.Text.StartsWith("Setup salvo recuperado"))throw new IOException(status.Text);
-  }catch(Exception ex){status.Text="Configuração de início inválida: "+ex.Message;StartupLog(status.Text);return;}
+  }catch(Exception ex){startupApplying=false;status.Text="Configuração de início inválida: "+ex.Message;StartupLog(status.Text);return;}
   finally{startupRestorePath=null;}
-  if(startBlackout){StartupLog("Estado apagado recuperado");await ToggleLighting();return;}
+  if(startBlackout){startupApplying=false;StartupLog("Estado apagado recuperado");await ToggleLighting();return;}
   for(int attempt=0;attempt<3;attempt++){
-   if(IsDisposed||busy||editorOpen)return;
-   startupApplying=true;
+   if(IsDisposed||busy||editorOpen){startupApplying=false;return;}
    try{await ApplyCards(cards.Where(c=>c.State.Included).ToList());}
    catch(Exception ex){status.Text="Falha ao iniciar iluminação: "+ex.Message;}
-   finally{startupApplying=false;}
    StartupLog("Tentativa "+(attempt+1)+": "+status.Text);
-   if(applySucceeded){if(effectTask.IsCompleted)await VerifyDevices();return;}
+   if(applySucceeded){startupApplying=false;if(effectTask.IsCompleted)await VerifyDevices();return;}
    revision=applyRevision;
    if(attempt==0)await ramReady;else await Task.Delay(1500);
-   if(IsDisposed||revision!=applyRevision)return;
+   if(IsDisposed||revision!=applyRevision){startupApplying=false;return;}
   }
+  startupApplying=false;
  }
 }
