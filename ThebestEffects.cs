@@ -70,7 +70,7 @@ partial class ThebestRGB {
   var indices=targets.Select(c=>cards.IndexOf(c)).ToArray();
   effectStarted=new TaskCompletionSource<bool>();effectCancel=new CancellationTokenSource();effectStop.Enabled=true;activate.Enabled=false;
   status.Text=effectMode.Text+" ativo. Mantenha o app aberto. Alterações ficam prontas para o próximo Aplicar.";
-  effectTask=RunEffect(targets,states,indices,mode,speed,effectCancel.Token);await effectStarted.Task;if(applySucceeded)for(int i=0;i<states.Length;i++)RecordApplied(indices[i],states[i],mode,speed,effectOptions[mode],pendingBar);
+  effectTask=RunEffect(targets,states,indices,mode,speed,effectCancel.Token);await effectStarted.Task;if(applySucceeded){for(int i=0;i<states.Length;i++)RecordApplied(indices[i],states[i],mode,speed,effectOptions[mode],pendingBar);setupDirty=false;}RefreshPendingBadge();
  }
  static void SendEffectFrame(int index,Color c,int brightness){
   int level=(brightness+2)/5;

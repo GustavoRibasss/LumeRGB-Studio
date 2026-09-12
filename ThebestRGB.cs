@@ -69,7 +69,7 @@ class LightCard:Panel {
 partial class ThebestRGB:Form {
  public static Color Muted=Color.FromArgb(144,155,177);
  Color accent=Color.FromArgb(137,104,255),global=Color.White;
- Panel side,main,hero;Label status,masterValue;Button all,pick,activate,save,load,remove;TextBox hex,profileName,profileDescription;StudioSlider master;ListBox profileList;
+ Panel side,main,hero;Label status,masterValue,pendingBadge;Button all,pick,activate,save,load,remove;TextBox hex,profileName,profileDescription;StudioSlider master;ListBox profileList;bool setupDirty;
  List<LightCard> cards=new List<LightCard>();List<LightProfile> profiles=new List<LightProfile>();bool busy,profilesWritable=true;MsiZoneSettings msiZones=new MsiZoneSettings();
  public static Button Button(string text,Color bg){return new StudioButton{Text=text,BackColor=bg,ForeColor=Color.White,FlatStyle=FlatStyle.Flat,Cursor=Cursors.Hand,Font=new Font("Segoe UI",9),UseVisualStyleBackColor=false,FlatAppearance={BorderSize=0}};}
  static Icon LoadAppIcon(){try{using(var stream=typeof(ThebestRGB).Assembly.GetManifestResourceStream("ThebestRGB.ico")){if(stream!=null)using(var icon=new Icon(stream))return (Icon)icon.Clone();}string path=Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"ThebestRGB.ico");if(File.Exists(path))return new Icon(path);}catch{}return SystemIcons.Application;}
@@ -131,6 +131,7 @@ void SetGlobal(Color c){global=c;pick.BackColor=global;pick.ForeColor=global.Get
     }catch(Exception ex){card.Status.Text="Falhou";errors.Add(state.Name+": "+ex.Message);}
    }).ToArray();
    await Task.WhenAll(sends);applySucceeded=errors.Count==0;applyError=string.Join(" | ",errors.ToArray());
+   if(applySucceeded){setupDirty=false;}RefreshPendingBadge();
    status.Text=applySucceeded?"Aplicado com sucesso em "+successes+" dispositivo(s). Confira os LEDs.":successes+" aplicado(s); "+applyError;
   }finally{SetBusy(false);}
  }
